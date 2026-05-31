@@ -13,6 +13,7 @@
  --g1:#8e8aaa;--g2:#8596aa;--g3:#9c8eaa;--g4:#839ca0;--g5:#a093a4;--g6:#8991a5;--g7:#969eab;--g8:#928ba0;--g9:#8999a0;
 }
 *{box-sizing:border-box}
+html{scrollbar-gutter:stable}
 html,body{margin:0;min-height:100%;font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",Arial,sans-serif;background:var(--bg);color:var(--ink)}
 body{letter-spacing:.01em}
 button,input,textarea{font:inherit}
@@ -34,7 +35,30 @@ button:disabled{cursor:not-allowed}
 .theme-decision .brandbar{background:rgba(250,249,245,.90)}
 .theme-thought .brandbar{background:rgba(246,243,234,.90)}
 .brand{font-size:19px;font-weight:620;letter-spacing:.16em}
-.signature{font-size:13px;color:var(--muted);letter-spacing:.04em}
+.brand-shell{position:relative;display:flex;align-items:center;gap:0}
+.brand-home{border:0;background:transparent;color:var(--ink);padding:0;margin-right:-2px;font:inherit;font-size:19px;font-weight:620;letter-spacing:.16em}
+.brand-toggle{height:30px;width:23px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;color:var(--muted);padding:0}
+.brand-toggle:hover{color:var(--sage)}
+.brand-chevron{display:block;width:8px;height:8px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translate(-1px,-2px);opacity:.72}
+.brand-chevron.is-open{transform:rotate(225deg) translate(-1px,-1px)}
+.brand-menu{position:absolute;left:-8px;top:40px;min-width:132px;padding:7px;background:var(--paper);border:1px solid var(--line);border-radius:13px;box-shadow:0 16px 35px rgba(38,35,30,.10);z-index:31}
+.brand-menu button{display:block;width:100%;height:42px;border:0;border-radius:9px;background:transparent;text-align:center;padding:0 10px;color:var(--ink);font-size:14px}
+.brand-menu button:hover{background:var(--sage-soft)}
+.signature{border:0;background:transparent;padding:8px 0 8px 12px;font-size:13px;color:var(--muted);letter-spacing:.04em}
+.signature:hover{color:var(--sage)}
+.library-stage{max-width:980px;padding-top:44px}
+.library-top{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:32px}
+.library-top h1{font-size:32px;font-weight:580;letter-spacing:.03em;margin:0 0 10px}
+.library-top p{font-size:14px;line-height:1.8;color:var(--muted);margin:0}
+.library-back{height:42px;border:1px solid var(--line);border-radius:11px;background:var(--paper);padding:0 15px;color:var(--muted);white-space:nowrap}
+.library-tabs{display:flex;gap:9px;margin-bottom:28px}
+.library-tab{height:44px;border:1px solid var(--line);border-radius:999px;background:var(--paper);color:var(--muted);padding:0 23px;transition:.18s}
+.library-tab.active{border-color:var(--sage);background:var(--sage-soft);color:var(--ink);font-weight:550}
+.library-panel{padding:28px;border:1px solid var(--line);border-radius:20px;background:color-mix(in srgb,var(--paper) 93%,var(--bg))}
+.library-panel .history{margin-top:0;padding-top:0;border-top:0}
+.library-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.history-jump-hint{display:none}
+
 .stage{max-width:1220px;margin:0 auto;padding:0 clamp(20px,5vw,58px) 54px}
 .hero{display:grid;grid-template-columns:1.08fr .92fr;gap:52px;align-items:end;padding:66px 0 50px}
 .overline{display:inline-flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);padding:7px 13px;border-radius:999px;font-size:12px;color:var(--muted)}
@@ -305,6 +329,10 @@ button:disabled{cursor:not-allowed}
 .version-action:hover{border-color:var(--sage)}
 .version-action.danger{border-color:color-mix(in srgb,var(--danger) 35%,var(--line));color:var(--danger)}
 .version-action.danger:hover{background:var(--danger-bg);border-color:var(--danger)}
+.gentle-tip-modal{background:linear-gradient(145deg,color-mix(in srgb,var(--paper) 95%,var(--bg)),color-mix(in srgb,var(--surface-soft) 84%,var(--paper)));border-color:color-mix(in srgb,var(--sage) 20%,var(--line))}
+.gentle-tip-modal h3{margin-bottom:13px}
+.gentle-tip-modal p{font-size:14px;line-height:1.86;margin:0;color:var(--muted);text-wrap:pretty}
+.gentle-tip-echo{margin-top:16px;padding:12px 13px;border-radius:12px;background:var(--surface-soft);font-size:13px;line-height:1.72;color:var(--muted)}
 .support-modal{background:linear-gradient(145deg,color-mix(in srgb,#fff1ed 58%,var(--paper)),color-mix(in srgb,#f2eefc 47%,var(--paper)) 52%,color-mix(in srgb,#fff4db 42%,var(--paper)));border-color:color-mix(in srgb,#dbcbd5 56%,var(--line))}
 .support-modal h3{font-weight:560}
 .support-modal p{text-wrap:pretty;word-break:normal}
@@ -333,6 +361,19 @@ button:disabled{cursor:not-allowed}
 }
 @media(max-width:650px){
  .brandbar{padding:0 18px}
+ .brand-home{font-size:19px}
+ .brand-menu{left:-5px;top:39px;min-width:126px}
+ .library-stage{padding-top:26px}
+ .library-top{display:block;margin-bottom:25px}
+ .library-top h1{font-size:27px;margin-bottom:8px}
+ .library-back{margin-top:18px}
+ .library-tabs{gap:8px;margin-bottom:21px}
+ .library-tab{height:42px;padding:0 17px;font-size:14px}
+ .library-panel{padding:19px 15px;border-radius:17px}
+ .library-panel .history-head{align-items:flex-start}
+ .history-jump-hint{position:fixed;left:50%;bottom:72px;z-index:26;width:46px;height:46px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--paper) 90%,var(--bg));color:var(--muted);box-shadow:0 12px 30px rgba(36,33,29,.12);display:flex;align-items:center;justify-content:center;font-size:22px;opacity:0;transform:translate(-50%,12px);transition:opacity .3s ease,transform .3s ease}
+ .history-jump-hint.is-show{opacity:1;transform:translate(-50%,0)}
+ .history-jump-hint.is-hide{opacity:0;transform:translate(-50%,8px)}
  .hero-desc{font-size:14px;line-height:1.78;max-width:335px}
  .hero-sample > .tiny{font-size:11px;line-height:1.6;display:block;max-width:260px}
  .hero-sample{height:398px}
@@ -628,8 +669,8 @@ function resetTemplateById(templateId){
  return null;
 }
 
-let projects=ensureTemplates(readStore()), page='home', homeMode=null, creationMode='decision', currentId=null, level=1;
-let overlay=null, pendingDelete=null, typingTimer=null, spotlightId=null, previewTimers=[];
+let projects=ensureTemplates(readStore()), page='home', homeMode=null, creationMode='decision', libraryMode='decision', currentId=null, level=1;
+let overlay=null, pendingDelete=null, typingTimer=null, spotlightId=null, previewTimers=[], brandMenuOpen=false, historyHintTimer=null, historyHintObserver=null;
 let expandedCards=new Set();
 let locatorHidden=false;
 let locatorGroupCursor=null;
@@ -647,7 +688,7 @@ function saveStore(){localStorage.setItem(STORAGE,JSON.stringify(projects))}
 function nowText(ts){const d=new Date(ts),z=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}月${d.getDate()}日 ${z(d.getHours())}:${z(d.getMinutes())}`}
 function project(){return projects.find(p=>p.id===currentId)}
 function theme(){
- const active = page==='home' ? homeMode : page==='create' ? creationMode : project()?.mode;
+ const active = page==='home' ? homeMode : page==='library' ? libraryMode : page==='create' ? creationMode : project()?.mode;
  return active==='thought' ? 'theme-thought' : active==='decision' ? 'theme-decision' : '';
 }
 function notify(t){
@@ -845,13 +886,15 @@ function render(){
  clearTimeout(typingTimer); clearPreviewTimers();
  prepareLocatorRenderState();
  const app=document.getElementById('app'); app.className=theme();
- app.innerHTML=page==='home'?homeHTML():page==='create'?createHTML():editorHTML();
+ app.innerHTML=page==='home'?homeHTML():page==='library'?libraryHTML():page==='create'?createHTML():editorHTML();
  renderOverlay();
  if(page==='create') typeHeading();
  if(page==='home'){startPreviewCycle();setupHeroDescriptionReveal()}
  if(page==='editor')runLocatorTransition();
 }
-function brandbar(){return `<header class="brandbar"><div class="brand">思路图</div><div class="signature">帮你理清问题</div></header>`}
+function brandbar(){
+ return `<header class="brandbar"><div class="brand-shell"><button class="brand-home" onclick="App.home()" aria-label="返回主页">思路图</button><button class="brand-toggle" onclick="App.toggleBrandMenu(event)" aria-label="${brandMenuOpen?'收起导航':'打开导航'}"><span class="brand-chevron ${brandMenuOpen?'is-open':''}"></span></button>${brandMenuOpen?`<div class="brand-menu"><button onclick="App.openLibrary()">我的思路图</button></div>`:''}</div><button class="signature" onclick="App.openGentleTip()">帮你理清问题</button></header>`;
+}
 function clearPreviewTimers(){previewTimers.forEach(t=>clearTimeout(t));previewTimers=[]}
 function typePreview(el,text,speed=42){
  if(!el)return; let i=0; el.textContent='';
@@ -937,13 +980,40 @@ function homeHTML(){
       : `<button class="mode-card switch" onclick="App.selectMode('decision')"><div class="mode-state">切换模式</div><h3>决策推演</h3><p>${modes.decision.home}</p></button>
          <button class="mode-card current" onclick="App.openCreate('thought')"><div class="mode-state">当前模式</div><h3>创建念头整理图</h3><p>${modes.thought.home}</p></button>`}
    </section>
-   <section class="history">
+   <section class="history" id="home-history-anchor">
     <div class="history-head"><div class="history-title-actions"><h2>我的${selected.name}图</h2><button class="mini import-btn" onclick="App.openImport()">导入文字版</button></div><span class="storage-note">自动保存在当前浏览器中</span></div>
     <div class="history-list">
       ${arr.length?arr.map(p=>`<div class="record"><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?'三层结构 · 可进入体验 · 不可删除':`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions"><button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
     </div>
     ${userGraphCount>=5?`<button class="history-return" onclick="App.backToModeChoice()">↑ 返回模式选择</button>`:''}
    </section>`}
+ </main>`;
+}
+function libraryHTML(){
+ const selected=modes[libraryMode];
+ const arr=projects.filter(p=>p.mode===libraryMode).sort((a,b)=>b.updatedAt-a.updatedAt);
+ return `${brandbar()}
+ <main class="stage library-stage">
+  <div class="library-top">
+   <div><h1>我的思路图</h1><p>在这里查看、继续编辑或迁移保存在当前浏览器中的思路图。</p></div>
+   <button class="library-back" onclick="App.home()">← 返回主页</button>
+  </div>
+  <div class="library-tabs" role="tablist" aria-label="思路图类型">
+   <button class="library-tab ${libraryMode==='decision'?'active':''}" onclick="App.setLibraryMode('decision')">决策推演图</button>
+   <button class="library-tab ${libraryMode==='thought'?'active':''}" onclick="App.setLibraryMode('thought')">念头整理图</button>
+  </div>
+  <section class="library-panel">
+   <section class="history">
+    <div class="history-head">
+     <div class="history-title-actions"><h2>我的${selected.name}图</h2><button class="mini import-btn" onclick="App.openImport()">导入文字版</button></div>
+     <span class="storage-note">自动保存在当前浏览器中</span>
+    </div>
+    <div class="library-actions" style="margin-bottom:18px"><button class="btn btn-primary" onclick="App.openCreate('${libraryMode}')">创建${selected.name}图</button></div>
+    <div class="history-list">
+     ${arr.length?arr.map(p=>`<div class="record"><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?'三层结构 · 可进入体验 · 不可删除':`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions"><button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
+    </div>
+   </section>
+  </section>
  </main>`;
 }
 function createHTML(){
@@ -1005,6 +1075,9 @@ function typeHeading(){
 }
 function overlayHTML(){
  if(!overlay)return '';
+ if(overlay.type==='gentleTip'){
+  return `<div class="mask"><div class="modal gentle-tip-modal"><h3>先别对我期待太高</h3><p>虽然我写着“帮你理清问题”，但我其实不负责替你想通。最多陪你把纠结摊开、把分支摆整齐——最后看明白的人，还是你自己。</p><div class="gentle-tip-echo">我负责把纸铺好，你负责把想法放上来。</div><div class="modal-actions"><button class="btn btn-primary" onclick="App.close()">行吧</button></div></div></div>`;
+ }
  if(overlay.type==='example'){
   const ex=examples[overlay.mode],m=modes[overlay.mode];
   return `<div class="mask"><div class="modal large"><span class="pill">${m.name} · 只读示例</span><h3 style="margin-top:6px">${overlay.mode==='thought'?'“'+ex.title+'”':ex.title}</h3><p>${esc(ex.context)}<br>${esc(ex.goal)}</p><div>${ex.nodes.map((n,i)=>`<div class="readonly-card" style="--accent:${COLORS[0]}"><b>${overlay.mode==='thought'?'“'+esc(n.title)+'”':esc(n.title)}</b>${overlay.mode==='decision'?decisionSummary(n):thoughtSummary(n)}</div>`).join('')}</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">关闭示例</button><button class="btn btn-primary" onclick="App.openCreate('${overlay.mode}')">新建${m.name}图</button></div></div></div>`;
@@ -1248,8 +1321,61 @@ function attemptCopyText(text, successMessage){
 }
 
 window.App={
- home(){overlay=null;pendingDelete=null;page='home';currentId=null;render();window.scrollTo(0,0)},
- selectMode(m){homeMode=m;render();},
+ home(){this.dismissHistoryHint();overlay=null;pendingDelete=null;brandMenuOpen=false;page='home';currentId=null;render();window.scrollTo(0,0)},
+ toggleBrandMenu(event){
+  if(event)event.stopPropagation();
+  brandMenuOpen=!brandMenuOpen;
+  const shell=document.querySelector('.brand-shell');
+  const toggle=document.querySelector('.brand-toggle');
+  const chevron=document.querySelector('.brand-chevron');
+  document.querySelector('.brand-menu')?.remove();
+  chevron?.classList.toggle('is-open',brandMenuOpen);
+  toggle?.setAttribute('aria-label',brandMenuOpen?'收起导航':'打开导航');
+  if(brandMenuOpen && shell) shell.insertAdjacentHTML('beforeend','<div class="brand-menu"><button onclick="App.openLibrary()">我的思路图</button></div>');
+ },
+ openGentleTip(){brandMenuOpen=false;document.querySelector('.brand-menu')?.remove();document.querySelector('.brand-chevron')?.classList.remove('is-open');overlay={type:'gentleTip'};renderOverlay()},
+ openLibrary(){this.dismissHistoryHint();overlay=null;pendingDelete=null;brandMenuOpen=false;libraryMode='decision';page='library';currentId=null;render();window.scrollTo(0,0)},
+ setLibraryMode(m){libraryMode=m;render();window.scrollTo({top:0,behavior:'smooth'})},
+ selectMode(m){homeMode=m;brandMenuOpen=false;render();this.showHistoryHint()},
+ showHistoryHint(){
+  this.dismissHistoryHint(true);
+  if(page!=='home'||!homeMode||!window.matchMedia('(max-width:650px)').matches)return;
+  const target=document.getElementById('home-history-anchor');
+  if(!target)return;
+  const btn=document.createElement('button');
+  btn.className='history-jump-hint';
+  btn.type='button';
+  btn.setAttribute('aria-label','查看我的思路图');
+  btn.textContent='↓';
+  btn.onclick=()=>App.jumpToHomeHistory();
+  document.getElementById('app').appendChild(btn);
+  requestAnimationFrame(()=>btn.classList.add('is-show'));
+  /* 用户自行滑动到“我的 ×× 图”区域时，提示已完成作用，立即淡出。 */
+  historyHintObserver=new IntersectionObserver(entries=>{
+   if(entries.some(entry=>entry.isIntersecting)) App.dismissHistoryHint();
+  },{root:null,threshold:0.01,rootMargin:'-62px 0px -12% 0px'});
+  historyHintObserver.observe(target);
+  historyHintTimer=setTimeout(()=>App.dismissHistoryHint(),3000);
+ },
+ dismissHistoryHint(immediate=false){
+  clearTimeout(historyHintTimer);
+  historyHintObserver?.disconnect();
+  historyHintObserver=null;
+  const btn=document.querySelector('.history-jump-hint');
+  if(!btn)return;
+  if(immediate){btn.remove();return}
+  btn.classList.remove('is-show');
+  btn.classList.add('is-hide');
+  setTimeout(()=>btn.remove(),320);
+ },
+ jumpToHomeHistory(){
+  this.dismissHistoryHint();
+  const target=document.getElementById('home-history-anchor');
+  if(!target)return;
+  const header=document.querySelector('.brandbar')?.getBoundingClientRect().height||66;
+  const top=window.scrollY+target.getBoundingClientRect().top-header-14;
+  window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+ },
  backToModeChoice(){
   const grid=document.querySelector('.mode-grid');
   if(!grid)return;
@@ -1541,6 +1667,13 @@ window.App={
  },
  convertDecision(){const old=project();const p={id:id('p'),mode:'decision',title:'我现在可以具体做什么？',context:'从念头整理转入执行：'+old.title,goal:'把念头转化为可以推进的行动。',nodes:[],createdAt:Date.now(),updatedAt:Date.now()};projects.unshift(p);saveStore();currentId=p.id;page='editor';level=1;overlay=null;render();notify('已进入决策推演')}
 };
+document.addEventListener('click',event=>{
+ if(brandMenuOpen && !event.target.closest('.brand-shell')){
+  brandMenuOpen=false;
+  document.querySelector('.brand-menu')?.remove();
+  document.querySelector('.brand-chevron')?.classList.remove('is-open');
+ }
+});
 render();
 })();
 </script>
