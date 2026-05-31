@@ -1,0 +1,1545 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>思路图｜by @Verseforge</title>
+<style>
+:root{
+ --bg:#f8f6f0;--paper:#fffefa;--ink:#292932;--muted:#716f7b;--line:#dfdbe0;
+ --sage:hsl(246 15% 55%);--sage-soft:hsl(246 20% 94%);--surface-soft:hsl(246 18% 96%);
+ --shadow:0 18px 48px rgba(41,37,31,.075);
+ --danger:#ad625b;--danger-bg:#f6e8e5;
+ --g1:#8e8aaa;--g2:#8596aa;--g3:#9c8eaa;--g4:#839ca0;--g5:#a093a4;--g6:#8991a5;--g7:#969eab;--g8:#928ba0;--g9:#8999a0;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:"PingFang SC","Noto Sans SC","Microsoft YaHei",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+body{letter-spacing:.01em}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed}
+.hidden{display:none!important}
+.theme-decision{
+ --bg:#faf9f5;--paper:#ffffff;--ink:#27313b;--muted:#687684;--line:#dbe2ea;
+ --sage:hsl(216 15% 55%);--sage-soft:hsl(216 20% 94%);--surface-soft:hsl(216 22% 96%);
+ --g1:#7896b1;--g2:#78a0aa;--g3:#8b91ad;--g4:#7fa59b;--g5:#9c95af;--g6:#8499ad;--g7:#91a69b;--g8:#9b90a1;--g9:#6f96a3;
+}
+.theme-thought{
+ --bg:#f6f3ea;--paper:#fffdf8;--ink:#302d38;--muted:#766e80;--line:#e2dce4;
+ --sage:hsl(276 15% 55%);--sage-soft:hsl(276 20% 94%);--surface-soft:hsl(276 18% 96%);
+ --g1:#9e8caf;--g2:#8e96b0;--g3:#ae91a8;--g4:#939eb0;--g5:#a58cae;--g6:#908aa4;--g7:#a395b0;--g8:#8d9aa4;--g9:#aa96a6;
+}
+#app{min-height:100vh;background:var(--bg);transition:background .3s ease,color .3s ease}
+.brandbar{height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(20px,5vw,58px);border-bottom:1px solid var(--line);background:rgba(248,246,240,.88);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
+.theme-decision .brandbar{background:rgba(250,249,245,.90)}
+.theme-thought .brandbar{background:rgba(246,243,234,.90)}
+.brand{font-size:19px;font-weight:620;letter-spacing:.16em}
+.signature{font-size:13px;color:var(--muted);letter-spacing:.04em}
+.stage{max-width:1220px;margin:0 auto;padding:0 clamp(20px,5vw,58px) 54px}
+.hero{display:grid;grid-template-columns:1.08fr .92fr;gap:52px;align-items:end;padding:66px 0 50px}
+.overline{display:inline-flex;align-items:center;gap:8px;background:var(--paper);border:1px solid var(--line);padding:7px 13px;border-radius:999px;font-size:12px;color:var(--muted)}
+.overline:before{content:"";height:6px;width:6px;border-radius:50%;background:var(--sage)}
+.byline{font-size:12px;color:var(--muted);margin:12px 0 0 3px;letter-spacing:.07em}
+.hero h1{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;font-size:clamp(46px,5.2vw,66px);font-weight:500;letter-spacing:.06em;line-height:1.21;margin:25px 0 18px}
+.hero h1 span{display:block}
+.reveal-line{opacity:0;transform:translateY(10px);animation:fadeLine .85s ease 1s forwards}
+@keyframes fadeLine{to{opacity:1;transform:translateY(0)}}
+.hero-desc{font-size:16px;line-height:1.9;color:var(--muted);max-width:530px;margin:0 0 33px;text-wrap:pretty;word-break:normal;opacity:0;transform:translateY(10px);transition:opacity .72s ease,transform .72s ease}
+.hero-desc.is-visible{opacity:1;transform:translateY(0)}
+.btn{height:45px;border-radius:12px;padding:0 18px;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:.18s ease;background:transparent}
+.btn-primary{background:var(--sage);color:#fff}
+.btn-primary:hover{filter:brightness(.95);transform:translateY(-1px)}
+.btn-secondary{background:color-mix(in srgb,var(--paper) 92%, var(--bg));border-color:var(--line);color:var(--ink)}
+.btn-secondary:hover{border-color:var(--sage)}
+.btn-plain{color:var(--muted)}
+.btn-danger{background:var(--paper);border-color:#ead2cc;color:var(--danger)}
+.btn-disabled{border:1px dashed var(--line);background:color-mix(in srgb,var(--paper) 72%,var(--bg));color:var(--muted);opacity:.78}
+.btn-disabled:hover{border-color:var(--sage);background:var(--sage-soft);opacity:1}
+.hero-sample{border:1px solid var(--line);background:var(--paper);border-radius:22px;padding:25px;box-shadow:var(--shadow);height:398px;box-sizing:border-box;overflow:hidden}
+#preview-cycle-host{height:308px;overflow:hidden}
+.tiny{font-size:12px;color:var(--muted);text-wrap:pretty;word-break:normal}
+.sample-root{margin-top:18px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--paper) 94%, var(--bg));padding:16px;font-size:14px}
+.sample-root strong{display:block;margin-bottom:6px}
+.sample-list{border-left:1px solid var(--line);margin:16px 0 0 18px;padding-left:17px;display:grid;gap:9px}
+.sample-mini{position:relative;background:color-mix(in srgb,var(--paper) 94%, var(--bg));border:1px solid var(--line);border-left:5px solid var(--g1);border-radius:11px;padding:11px 12px;font-size:13px}
+.sample-mini:before{content:"";position:absolute;top:20px;left:-22px;width:17px;border-top:1px solid var(--line)}
+.preview-window{position:relative;height:290px;min-height:290px;margin-top:18px;overflow:hidden;box-sizing:border-box;transition:opacity .48s ease}
+.preview-window .sample-root{height:94px;box-sizing:border-box;overflow:hidden}
+.preview-window .sample-list{height:180px;overflow:hidden}
+.preview-window .sample-mini{height:54px;box-sizing:border-box;display:flex;align-items:center;overflow:hidden}
+.preview-window.fade-out{opacity:0}
+.preview-window .sample-root{margin-top:0;opacity:0;transform:translateY(7px);transition:opacity .36s ease,transform .36s ease}
+.preview-window .sample-root.show{opacity:1;transform:translateY(0)}
+.preview-window .sample-list{margin-top:16px}
+.preview-window .sample-mini{opacity:0;transform:translateY(7px);transition:opacity .3s ease,transform .3s ease}
+.preview-window .sample-mini.show{opacity:1;transform:translateY(0)}
+.preview-type{display:inline-block;min-height:1.2em}
+.preview-caption{display:block;min-height:1.45em;font-size:12px;color:var(--muted)}
+
+.section-title{display:flex;align-items:baseline;justify-content:space-between;gap:18px;margin:15px 0 20px}
+.section-title h2{margin:0;font-size:25px;font-weight:570}
+.section-title p{margin:0;color:var(--muted);font-size:13px}
+.mode-grid,.example-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.mode-switch{height:36px;border:0;background:transparent;color:var(--muted);font-size:13px;padding:0}
+.mode-card{border:1px solid var(--line);background:var(--paper);border-radius:18px;text-align:left;padding:25px;min-height:178px;transition:.18s}
+.mode-card:hover{box-shadow:0 11px 26px rgba(40,37,31,.05);transform:translateY(-2px);border-color:var(--sage)}
+.mode-card.current{border-color:color-mix(in srgb,var(--sage) 44%, var(--line));background:color-mix(in srgb,var(--sage-soft) 34%, var(--paper))}
+.mode-card.switch{background:var(--paper)}
+.mode-state{display:inline-flex;padding:4px 9px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-size:11px;margin-bottom:25px}
+.mode-card.switch .mode-state{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.mode-id{font-size:12px;color:var(--sage);margin-bottom:32px;letter-spacing:.09em}
+.mode-card h3{font-size:21px;margin:0 0 10px;font-weight:580}
+.mode-card p{font-size:14px;line-height:1.7;color:var(--muted);margin:0}
+.examples{margin-top:50px}
+.example-card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.example-card strong{display:block;font-size:14px;margin-bottom:7px}
+.history{margin-top:48px;padding-top:34px;border-top:1px solid var(--line)}
+.example-badge{display:inline-flex;padding:3px 8px;margin-right:8px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-size:11px;vertical-align:1px;white-space:nowrap}
+.template-inline{display:inline-flex;margin-left:0;padding:3px 8px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-size:11px;line-height:1.45;vertical-align:middle}
+.template-note{display:inline-flex;padding:3px 8px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-size:11px;margin-right:8px;white-space:nowrap}
+
+.history-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
+.history-title-actions{display:flex;align-items:center;gap:14px;min-width:0}
+.history-head h2{font-size:25px;font-weight:570;margin:0;white-space:nowrap}
+.history-head .storage-note{font-size:13px;color:var(--muted);white-space:nowrap}
+.import-btn{flex:none;transform:translateY(.5px)}
+.tabline{display:flex;gap:7px;margin-bottom:18px}
+.tab{border:1px solid var(--line);background:transparent;border-radius:999px;height:37px;padding:0 16px;color:var(--muted)}
+.tab.active{border-color:var(--sage);background:var(--sage-soft);color:var(--ink)}
+.history-list{display:grid;gap:10px}
+.history-return{display:block;margin:26px auto 0;border:0;background:transparent;color:var(--muted);font-size:13px;padding:8px 14px;letter-spacing:.02em}
+.history-return:hover{color:var(--sage);text-decoration:underline;text-underline-offset:5px}
+.empty{border:1px dashed var(--line);border-radius:15px;padding:25px;color:var(--muted);font-size:14px}
+.record{border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 94%, var(--bg));border-radius:15px;padding:15px 17px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.record-title{font-weight:550;font-size:15px;margin-bottom:6px}
+.record-meta{font-size:12px;color:var(--muted)}
+.record-actions{display:flex;gap:7px}
+.mini{height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 92%, var(--bg));color:var(--ink);font-size:13px}
+.mini.warn{color:var(--danger)}
+.create-wrap{max-width:710px;margin:60px auto}
+.back{border:0;background:none;color:var(--muted);padding:0;margin-bottom:36px;font-size:14px}
+.create-panel{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:clamp(27px,5vw,42px);box-shadow:var(--shadow)}
+.pill{display:inline-flex;align-items:center;padding:7px 13px;border-radius:999px;font-size:12px;color:var(--ink);background:var(--sage-soft);margin-bottom:23px}
+.typed{font-family:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong","SimSun",serif;font-size:33px;font-weight:500;line-height:1.5;min-height:50px;margin:0 0 30px;letter-spacing:.03em}
+.cursor{display:inline-block;width:1px;height:31px;margin-left:3px;background:var(--sage);vertical-align:-5px;animation:blink .85s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.field{margin-bottom:22px}
+.field label{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-bottom:10px}
+.field small{color:var(--muted)}
+.input,.textarea{width:100%;border:1px solid var(--line);border-radius:12px;padding:14px 15px;background:var(--paper);outline:none;color:var(--ink)}
+.input:focus,.textarea:focus{border-color:var(--sage);box-shadow:0 0 0 3px color-mix(in srgb,var(--sage) 18%, transparent)}
+.textarea{height:96px;resize:vertical;line-height:1.7}
+.form-actions{display:flex;gap:10px;margin-top:29px}
+.workspace{max-width:1420px;margin:0 auto;padding:22px clamp(16px,3vw,36px) 38px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px}
+.toolbar-left,.toolbar-right{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.back-square{height:43px;width:43px;border-radius:12px;background:var(--paper);border:1px solid var(--line);color:var(--muted)}
+.saved{font-size:12px;color:var(--muted)}
+.workgrid{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px}
+.side{border:1px solid var(--line);background:var(--paper);border-radius:18px;padding:18px;height:fit-content;position:sticky;top:88px}
+.side h3{font-size:13px;color:var(--muted);font-weight:540;margin:0 0 13px}
+.guidance{font-size:13px;color:var(--muted);line-height:1.75;background:color-mix(in srgb,var(--sage-soft) 55%, var(--paper));border-radius:12px;padding:13px;margin-bottom:20px;text-wrap:pretty;word-break:normal}
+.limit{font-size:12px;color:var(--muted);line-height:1.85;text-wrap:pretty;word-break:normal}
+.limit-row{display:block;margin-bottom:3px}
+.canvas{border:1px solid var(--line);background:var(--paper);border-radius:19px;padding:clamp(18px,3vw,29px);min-height:665px}
+.root{border:1px solid color-mix(in srgb,var(--sage) 35%, var(--line));background:color-mix(in srgb,var(--sage-soft) 34%, white);border-radius:17px;padding:20px;margin-bottom:22px}
+.root-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}
+.root-top > .mini{white-space:nowrap;flex:0 0 auto;min-width:82px}
+.root-label{font-size:12px;color:var(--sage);margin-bottom:8px;display:flex;align-items:center;gap:8px;min-height:22px}
+.root h2{font-size:23px;line-height:1.47;margin:0 0 10px;font-weight:590}
+.theme-thought .root h2:before{content:'“'}
+.theme-thought .root h2:after{content:'”'}
+.root-row{font-size:14px;color:var(--muted);line-height:1.68;margin-top:5px}
+.root-row b{font-weight:500;color:var(--ink);margin-right:6px}
+.levelbar{border-bottom:1px solid var(--line);display:flex;gap:5px;padding-bottom:12px;margin-bottom:19px;overflow:auto}
+.level-tab{flex:none;height:39px;padding:0 16px;border:0;border-radius:10px;background:transparent;color:var(--muted)}
+.level-tab.active{background:var(--sage-soft);color:var(--ink)}
+.level-tab.unavailable{opacity:.38;cursor:pointer}
+.level-tab.unavailable:hover{background:color-mix(in srgb,var(--sage-soft) 46%,transparent);color:var(--muted)}
+.level-info{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px;color:var(--muted);font-size:13px}
+.level-info-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fold-control{height:33px;padding:0 12px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 92%,var(--bg));color:var(--muted);border-radius:9px;font-size:12px}
+.fold-control:hover{border-color:var(--sage);color:var(--ink)}
+.detail-toggle{margin-top:8px}
+.levelbar{scroll-margin-top:88px}
+.level-bottom-nav{display:flex;justify-content:center;gap:10px;margin:24px 0 6px;padding-top:18px;border-top:1px dashed var(--line)}
+.level-bottom-nav .btn{min-width:118px}
+.locator-nav{position:fixed;right:max(10px,calc((100vw - 1480px)/2));top:50%;transform:translateY(-50%);z-index:24;width:42px;height:230px;pointer-events:none}
+.locator-rail{position:absolute;right:0;top:0;display:flex;flex-direction:column;gap:5px;opacity:1;transform:translateX(0);transition:transform .38s ease,opacity .32s ease;pointer-events:auto}
+.locator-btn{height:40px;width:40px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--paper) 93%,var(--bg));color:var(--muted);font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 7px 20px rgba(35,32,27,.05)}
+.locator-rail .locator-btn{transition:transform .3s ease,opacity .24s ease,border-color .2s ease,background .2s ease,color .2s ease}
+.locator-btn:hover{border-color:var(--sage);color:var(--ink);background:var(--sage-soft)}
+.locator-btn.fold{font-size:22px;line-height:1}
+.locator-toggle-slot{position:relative;height:40px;width:40px;flex:0 0 40px}
+.locator-toggle-slot .locator-btn{position:absolute;inset:0;transition:opacity .18s ease,border-color .18s ease,background .18s ease,color .18s ease}
+.locator-dismiss-back{opacity:0;pointer-events:none}
+.locator-dismiss-forward{opacity:1;pointer-events:auto}
+.locator-nav.is-settling .locator-dismiss-back{opacity:1;pointer-events:auto}
+.locator-nav.is-settling .locator-dismiss-forward{opacity:0;pointer-events:none}
+.locator-nav.is-toggle-fading-out .locator-dismiss-back,
+.locator-nav.is-toggle-fading-out .locator-dismiss-forward{opacity:0;pointer-events:none}
+.locator-open{position:absolute;right:0;top:92px;opacity:0;transform:translateX(58px);transition:transform .36s ease,opacity .3s ease;pointer-events:none}
+.locator-nav.is-collapsed .locator-rail{opacity:0;transform:translateX(58px);pointer-events:none}
+.locator-nav.is-collapsed .locator-open{opacity:1;transform:translateX(0);pointer-events:auto}
+.locator-nav.is-arriving .locator-open{opacity:0;transform:translateX(58px);pointer-events:none}
+.locator-nav.is-leaving .locator-open{opacity:0;transform:translateX(58px);pointer-events:none}
+/* 完整定位栏离场：四个定位按钮先走，中间的 › 留在原位停顿后再走。 */
+.locator-nav.is-exiting-expanded .locator-rail{pointer-events:none}
+.locator-nav.is-exiting-expanded .locator-rail .locator-btn:not(.locator-middle){opacity:0;transform:translateX(58px)}
+.locator-nav.is-exiting-expanded .locator-rail .locator-dismiss-back{opacity:0;pointer-events:none}
+.locator-nav.is-exiting-expanded .locator-rail .locator-dismiss-forward{opacity:1;transform:translateX(0);pointer-events:none}
+.locator-nav.is-exiting-toggle .locator-rail .locator-dismiss-forward{opacity:0;transform:translateX(58px)}
+.level-info{scroll-margin-top:90px}
+.branch{scroll-margin-top:90px}
+
+.card-list{display:grid;gap:13px}
+.branch{--accent:var(--g1);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:14px;background:color-mix(in srgb,var(--paper) 94%, var(--bg));padding:14px 14px 13px;transition:.2s}
+.branch.impacted{border-color:#d78880;animation:warnFlash .9s ease infinite}
+@keyframes warnFlash{0%,100%{box-shadow:0 0 0 0 rgba(186,87,78,.07)}50%{box-shadow:0 0 0 3px rgba(186,87,78,.17)}}
+.branch.spotlight{animation:spotlight 1.15s ease 1}
+@keyframes spotlight{
+ 0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 0%, transparent);background:#fff}
+ 22%{box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 34%, transparent);background:color-mix(in srgb,var(--accent) 10%, #fff)}
+ 55%{box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 22%, transparent);background:color-mix(in srgb,var(--accent) 7%, #fff)}
+ 100%{box-shadow:0 0 0 0 transparent;background:#fff}
+}
+.branch-head{display:flex;align-items:start;justify-content:space-between;gap:11px}
+.parent-ref{font-size:11px;color:var(--muted);margin-bottom:8px}
+.branch-title{font-size:16px;font-weight:560;line-height:1.55}
+.theme-thought .branch-title:before{content:'“'}
+.theme-thought .branch-title:after{content:'”'}
+.branch-note{font-size:13px;line-height:1.7;color:var(--muted);margin-top:7px;white-space:pre-wrap}
+.branch-summary{display:grid;gap:10px;margin-top:13px}
+.info-block{border-radius:10px;background:color-mix(in srgb,var(--paper) 88%,var(--bg));border:1px solid color-mix(in srgb,var(--line) 72%,transparent);padding:10px 11px}
+.info-title{font-size:11px;letter-spacing:.05em;color:var(--muted);margin-bottom:6px}
+.info-text{font-size:13px;line-height:1.62;white-space:pre-wrap}
+.item-list{display:grid;gap:6px}
+.structured-item{display:flex;align-items:flex-start;gap:7px;font-size:13px;line-height:1.55}
+.certainty{flex:none;display:inline-flex;padding:2px 7px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-size:11px;white-space:nowrap;margin-top:1px}
+.thought-fact{border-left:3px solid color-mix(in srgb,var(--sage) 55%,var(--line))}
+.thought-subjective{border-left:3px dashed color-mix(in srgb,var(--sage) 46%,var(--line))}
+.thought-action{border-left:3px solid var(--sage);background:color-mix(in srgb,var(--sage-soft) 48%,var(--paper))}
+.action-steps{display:grid;gap:5px;margin-top:7px}
+.action-step{font-size:12px;line-height:1.55;color:var(--muted);display:flex;gap:7px}
+.step-num{color:var(--sage);font-weight:600}
+.form-guide{background:color-mix(in srgb,var(--sage-soft) 54%,var(--paper));border-radius:12px;padding:11px 13px;color:var(--muted);font-size:13px;line-height:1.7;margin:-6px 0 18px}
+.subform{border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 92%,var(--bg));border-radius:13px;padding:15px;margin:18px 0}
+.subform.rated-subform{position:relative;margin:38px 0 27px}
+.subform.rated-subform:first-of-type{margin-top:42px}
+.subform-limit-corner{position:absolute;right:2px;top:-27px;font-size:12px;line-height:1.5;color:var(--muted);font-weight:400;white-space:nowrap}
+.subform-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.subform-title{font-size:14px;font-weight:560;white-space:nowrap}
+.subform-help{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:10px}
+.line-items{display:grid;gap:8px}
+.line-row{display:grid;grid-template-columns:116px minmax(0,1fr) 34px;gap:7px;align-items:center}
+.line-row.step-row{grid-template-columns:minmax(0,1fr) 34px}
+.select{height:40px;width:100%;border:1px solid var(--line);border-radius:9px;padding:0 8px;background:var(--paper);color:var(--ink);outline:none;font-size:12px}
+.row-input{height:40px;width:100%;border:1px solid var(--line);border-radius:9px;padding:0 10px;background:var(--paper);color:var(--ink);outline:none;font-size:13px}
+.row-input:focus,.select:focus{border-color:var(--sage);box-shadow:0 0 0 2px color-mix(in srgb,var(--sage) 15%,transparent)}
+.row-delete{height:34px;width:34px;border:1px solid var(--line);background:transparent;border-radius:8px;color:var(--muted)}
+.add-line{height:34px;border:1px dashed var(--line);border-radius:9px;background:transparent;color:var(--muted);font-size:12px;padding:0 12px;margin-top:9px}
+.required{color:var(--sage);font-size:11px;margin-left:5px}
+.gate-list{margin:12px 0 0;padding:0;display:grid;gap:8px;list-style:none}
+.gate-list li{padding:9px 11px;border-radius:9px;background:color-mix(in srgb,var(--sage-soft) 48%,var(--paper));font-size:13px;color:var(--muted)}
+.root-structured{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:13px}
+
+.actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.act{height:30px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 92%, var(--bg));border-radius:8px;padding:0 9px;font-size:12px;color:var(--muted)}
+.act:hover{border-color:var(--sage);color:var(--ink)}
+.act:disabled{opacity:.3}
+.card-bottom{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:13px;padding-top:11px;border-top:1px dashed var(--line)}
+.child-count{font-size:12px;color:var(--muted)}
+.child-link{border:0;background:transparent;color:var(--muted);font-size:12px;padding:0;text-align:left;line-height:1.7;align-self:flex-start;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px;text-decoration-style:dashed}
+.child-link:hover{color:var(--sage)}
+.child-items{display:grid;gap:9px;margin-top:16px}
+.child-item{border:1px solid var(--line);border-radius:11px;padding:12px;background:color-mix(in srgb,var(--paper) 94%,var(--bg));display:flex;align-items:center;justify-content:space-between;gap:12px}
+.child-item-title{font-size:13px;font-weight:540;line-height:1.6;min-width:0}
+.child-go{height:34px;white-space:nowrap;border:0;background:transparent;color:var(--sage);font-size:12px}
+.child-go:hover{text-decoration:underline}
+.no-level{border:1px dashed var(--line);border-radius:15px;padding:56px 18px;text-align:center;color:var(--muted)}
+.no-level p{margin:0 0 19px;line-height:1.75}
+.boundary{font-size:12px;line-height:1.8;color:var(--muted);border-top:1px solid var(--line);margin-top:26px;padding-top:16px}
+.mask{position:fixed;inset:0;background:rgba(34,32,27,.28);display:flex;align-items:center;justify-content:center;padding:18px;z-index:80}
+.modal{width:min(590px,100%);max-height:min(88vh,850px);overflow:auto;border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 96%, var(--bg));border-radius:21px;padding:25px;box-shadow:0 30px 76px rgba(32,28,23,.2)}
+.modal.large{width:min(760px,100%)}
+.modal h3{font-size:21px;font-weight:580;margin:0 0 18px}
+.modal p{font-size:14px;color:var(--muted);line-height:1.78}
+.mode-choice{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.choose{padding:19px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--paper) 93%, var(--bg));text-align:left}
+.choose:hover{border-color:var(--sage)}
+.choose strong{display:block;font-size:17px;margin-bottom:8px}
+.choose span{color:var(--muted);font-size:13px;line-height:1.6}
+.modal-actions{margin-top:22px;display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.branch-form .textarea{height:88px}
+.warning-preview{border:1px solid #ead2cc;background:#fffafa;border-radius:13px;padding:12px;margin-top:14px;display:grid;gap:8px}
+.warning-item{border-left:4px solid #d78880;background:var(--paper);padding:8px 11px;border-radius:8px;font-size:13px}
+.export-area{height:310px;width:100%;resize:none;background:var(--surface-soft);border:1px solid var(--line);border-radius:13px;padding:13px;font-size:13px;line-height:1.72;color:var(--ink)}
+.import-area{height:300px;width:100%;resize:vertical;background:var(--surface-soft);border:1px solid var(--line);border-radius:13px;padding:13px;font-size:13px;line-height:1.72;color:var(--ink);outline:none}
+.import-area:focus{border-color:var(--sage);box-shadow:0 0 0 3px color-mix(in srgb,var(--sage) 14%,transparent)}
+.versions{display:grid;gap:9px;margin-top:16px}
+.version-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;border:1px solid var(--line);border-radius:13px;padding:14px 15px;background:color-mix(in srgb,var(--paper) 93%,var(--bg))}
+.version-row strong{font-size:13px;font-weight:540;display:block;margin-bottom:4px}
+.version-row span{font-size:12px;color:var(--muted)}
+.version-note-btn{border:0;background:transparent;padding:0;color:var(--ink);font-size:14px;font-weight:560;text-align:left;text-decoration:underline;text-decoration-style:dashed;text-decoration-color:color-mix(in srgb,var(--muted) 56%,transparent);text-underline-offset:4px}
+.version-note-btn:hover{color:var(--sage);text-decoration-color:var(--sage)}
+.version-help{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.7}
+.versions-footer{align-items:center;justify-content:space-between}
+.version-copy-tip{font-size:12px;line-height:1.7;color:var(--muted);max-width:70%}
+.version-copy-tip button{border:0;background:transparent;color:var(--sage);padding:0;font-size:12px;text-decoration:underline;text-underline-offset:3px}
+.subform-limit{font-size:12px;color:var(--muted);font-weight:400;margin-left:8px}
+.modal-note{font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px}
+.help-link{display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;color:var(--sage);font-size:12px;padding:0;margin-top:10px}
+.help-link:hover{text-decoration:underline}
+.rule-card{margin-top:13px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;background:var(--surface-soft)}
+.rule-card h4{font-size:13px;margin:0 0 7px;font-weight:570}
+.rule-card p,.rule-card li{font-size:12px;line-height:1.72;color:var(--muted)}
+.rule-card ul{padding-left:18px;margin:5px 0 0}
+.error-highlight{border-radius:11px;background:color-mix(in srgb,var(--sage-soft) 48%,var(--paper));padding:11px 12px;margin:12px 0;font-size:13px;line-height:1.72;color:var(--ink)}
+.disclaimer{font-size:12px;color:var(--muted);line-height:1.72;margin-top:12px;padding-top:11px;border-top:1px dashed var(--line)}
+.version-name-row{display:block;margin-bottom:5px}
+.version-actions{display:flex;align-items:center;gap:8px;flex:none;flex-wrap:wrap}
+.version-action{height:38px;min-width:58px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 94%,var(--bg));color:var(--ink);font-size:13px}
+.version-action:hover{border-color:var(--sage)}
+.version-action.danger{border-color:color-mix(in srgb,var(--danger) 35%,var(--line));color:var(--danger)}
+.version-action.danger:hover{background:var(--danger-bg);border-color:var(--danger)}
+.support-modal{background:linear-gradient(145deg,color-mix(in srgb,#fff1ed 58%,var(--paper)),color-mix(in srgb,#f2eefc 47%,var(--paper)) 52%,color-mix(in srgb,#fff4db 42%,var(--paper)));border-color:color-mix(in srgb,#dbcbd5 56%,var(--line))}
+.support-modal h3{font-weight:560}
+.support-modal p{text-wrap:pretty;word-break:normal}
+.support-options{display:grid;gap:10px;margin-top:16px}
+.support-option{border:1px solid color-mix(in srgb,var(--line) 70%,#eadbe2);background:color-mix(in srgb,var(--paper) 84%,#fff2ee);border-radius:14px;padding:14px;text-align:left;color:var(--ink)}
+.support-option:hover{border-color:color-mix(in srgb,var(--sage) 52%,#dcbec8);transform:translateY(-1px)}
+.support-option strong{display:block;font-size:14px;margin-bottom:5px}
+.support-option span{display:block;font-size:12px;line-height:1.62;color:var(--muted)}
+.support-note{font-size:12px;line-height:1.72;color:var(--muted);margin-top:14px}
+.stash{background:linear-gradient(128deg,color-mix(in srgb,#fff2ec 62%,var(--paper)),color-mix(in srgb,#f4effb 38%,var(--paper)));border-left-color:#cfaaa8}
+.stash-label{display:inline-flex;padding:4px 9px;border-radius:999px;background:color-mix(in srgb,#f6dfdc 74%,var(--paper));color:#957070;font-size:11px;margin-bottom:8px}
+.stash-hint{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.65}
+.boundary.decision{border-top-color:color-mix(in srgb,var(--sage) 24%,var(--line))}
+.boundary.thought{border-top-color:color-mix(in srgb,#b99ab0 26%,var(--line))}
+
+
+.readonly-card{border:1px solid var(--line);border-left:5px solid var(--accent,var(--g1));background:var(--paper);border-radius:12px;padding:12px;margin-top:10px}
+.readonly-card b{display:block;margin-bottom:6px}
+.center-toast{position:fixed;top:86px;left:50%;transform:translateX(-50%);padding:12px 18px;background:#30352f;color:white;border-radius:11px;font-size:13px;z-index:99;box-shadow:var(--shadow);animation:toastIn .2s ease}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,-7px)}to{opacity:1;transform:translate(-50%,0)}}
+@media(max-width:940px){
+ .hero{grid-template-columns:1fr;gap:34px;padding-top:42px}
+ .workgrid{grid-template-columns:1fr}
+ .side{position:static}
+ .toolbar{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:650px){
+ .brandbar{padding:0 18px}
+ .hero-desc{font-size:14px;line-height:1.78;max-width:335px}
+ .hero-sample > .tiny{font-size:11px;line-height:1.6;display:block;max-width:260px}
+ .hero-sample{height:398px}
+ #preview-cycle-host{height:308px}
+ .preview-window{height:290px;min-height:290px}
+ .guidance{font-size:12px;line-height:1.68;padding:12px}
+ .limit{font-size:11.5px;line-height:1.72}
+ .level-info{display:grid;grid-template-columns:1fr;gap:9px}
+ .level-info-right{margin-left:auto;justify-content:flex-end}
+ .level-info > span{font-size:12px}
+ .history-head > span{font-size:12px}
+
+ .stage{padding:0 18px 38px}
+ .hero h1{font-size:41px;letter-spacing:.045em}
+ .hero-desc{font-size:15px}
+ .mode-grid,.example-grid,.mode-choice{grid-template-columns:1fr}
+ .section-title,.history-head{align-items:flex-start;flex-direction:column;gap:10px}
+ .history-title-actions{display:flex;flex-direction:column;align-items:flex-start;gap:10px;width:100%}
+ .history-head .storage-note{font-size:12px}
+ .import-btn{align-self:flex-start;transform:none}
+ .record{align-items:flex-start;flex-direction:column}
+ .root-top{flex-direction:column}
+ .branch-head{flex-direction:column}
+ .actions{justify-content:flex-start}
+ .canvas{min-height:500px}
+ .root-structured{grid-template-columns:1fr}
+ .line-row{grid-template-columns:1fr}
+ .line-row .row-delete{justify-self:end}
+ .version-row{grid-template-columns:1fr;gap:13px;padding:14px}
+ .version-actions{justify-content:flex-start}
+ .version-action{height:42px;min-width:70px}
+ .child-item{align-items:flex-start;flex-direction:column}
+ .child-go{padding:0}
+ .card-bottom{align-items:flex-start}
+ .locator-nav{right:8px;width:38px;height:214px}
+ .locator-rail{gap:4px}
+ .locator-btn{height:37px;width:37px;border-radius:11px;font-size:16px;background:color-mix(in srgb,var(--paper) 88%,var(--bg))}
+ .locator-btn.fold{font-size:20px}
+ .locator-toggle-slot{height:37px;width:37px;flex-basis:37px}
+ .locator-open{top:84px}
+ .subform.rated-subform{margin:42px 0 30px}
+ .subform-limit-corner{top:-29px;right:1px;font-size:11.5px}
+ .versions-footer{align-items:flex-start;flex-direction:column-reverse;gap:12px}
+ .version-copy-tip{max-width:100%}
+}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="modal"></div><div id="toast"></div>
+<script>
+(()=> {
+const STORAGE='siluotu_round1_v1';
+const COLORS=['var(--g1)','var(--g2)','var(--g3)','var(--g4)','var(--g5)','var(--g6)','var(--g7)','var(--g8)','var(--g9)'];
+const modes={
+ decision:{
+  name:'决策推演', home:'把选择、条件和可能路径放在一起比较。',
+  create:'你现在需要判断什么？',
+  labels:['问题标题','已知背景','目标或约束'],
+  placeholders:['例如：这个 AI 工具第一版要做到什么程度？','已经确定的信息、当前情况或限制条件','我希望达到什么，或不希望牺牲什么'],
+  branch:'添加一个可能的选择', branchTitle:'选择标题', branchNote:'补充这个选择的前提、理由或你想记录的内容',
+  start:'决策起点',
+  limitRoot:'从起点出发的主要方案建议先控制在三条以内。试着合并相近选择，或先从最值得比较的三个方向开始。',
+  limitChild:'这个选择已经延伸出三条后续路径了。继续增加可能会让比较变得更困难，先看看现有路径是否覆盖了主要变化。',
+  limitDepth:'这条路径已经推演了五步。比起继续向下延伸，现在更适合回头比较其他方案，或补充现有路径。',
+  limitTotal:'这张思路图已经展开得很充分了。继续堆叠路径可能会让重点变得模糊。你可以把当前分支作为新的起点继续分析。'
+ },
+ thought:{
+  name:'念头整理', home:'把反复出现的念头写下，回到事实与行动。',
+  create:'此刻最困扰你的念头是什么？',
+  labels:['此刻的念头','发生了什么？','我希望最后改善什么？'],
+  placeholders:['例如：这次反馈不多，是不是说明我不适合继续做？','写下你观察到的事情，不必急着下结论','例如：先停止反复猜测，找到一件能开始做的小事'],
+  branch:'添加一个延伸念头', branchTitle:'当前念头', branchNote:'先简单记录这一条；事实与行动拆解将在下一轮补全',
+  start:'核心念头',
+  limitRoot:'围绕核心念头，先保留最牵动你的三条延伸就够了。继续增加之前，试着先看看其中哪些来自事实，哪些来自担忧。',
+  limitChild:'这个念头已经延伸出了三条方向。继续往下想之前，先看看其中哪些是事实，以及你现在能够做的一件小事。',
+  limitDepth:'这条念头已经被拆得很深了。先暂停继续追问，回头看看已经写下的事实与行动，也许更能帮助你前进一步。',
+  limitTotal:'你已经把很多念头都写下来了。现在继续扩展可能不会让事情更清楚。先回到行动，选择一个最小步骤开始做。'
+ }
+};
+const examples={
+ decision:{title:'这个 AI 工具第一版要做到什么程度？', context:'我希望项目能够体现产品思维，也需要控制实现范围。', goal:'先做出能被测试和调整的版本。',nodes:[
+  {title:'只做基础结构',facts:['可以先验证树状整理体验'],costs:[{certainty:'已确定',text:'暂时不包含 AI 能力'}],risks:[{certainty:'较高可能',text:'作品集亮点偏弱'}],returns:[{certainty:'较高可能',text:'更快完成可测试版本'}],children:[]},
+  {title:'基础结构 + 单次 AI 检查',facts:['基础交互稳定后再接入一次分析'],costs:[{certainty:'较高可能',text:'需要设计结构化输入输出'}],risks:[{certainty:'中等可能',text:'分析结果需要多轮调试'}],returns:[{certainty:'较高可能',text:'同时体现产品与 AI 能力'}],children:[]},
+  {title:'一开始完成全部功能',facts:['需要同时开发编辑、分析与完整规则'],costs:[{certainty:'已确定',text:'功能范围显著扩大'}],risks:[{certainty:'较高可能',text:'拖慢完成进度'}],returns:[{certainty:'较低可能',text:'初版功能更完整'}],children:[]}
+ ]},
+ thought:{title:'这次分享反馈不多，是不是说明我不值得继续做？',context:'我看到这一次的互动数量较少。',goal:'先分清事实与担忧，再决定下一步。',nodes:[
+  {title:'是不是大家根本不喜欢我的内容？',fact:'这一次互动数量较少。',subjective:'我把一次反馈推成了所有人都不喜欢。',action:'复盘标题与封面。',steps:['记录本次数据','观察下一次内容差异'],children:[]},
+  {title:'是不是以后也不会有人关注？',fact:'目前没有看到明确取关信息。',subjective:'我把未来想成了确定的负面结果。',action:'暂停用一次表现判断长期方向。',steps:['保留观察记录'],children:[]},
+  {title:'是不是我应该立刻停下来？',fact:'我仍然有继续尝试的空间。',subjective:'我想在不确定时快速做结论。',action:'先完成下一次小范围尝试。',steps:['选一个更小主题'],children:[]}
+ ]}
+};
+
+function templateProjects(){
+ const time=Date.now()-1000;
+ return [
+  {
+   id:'builtin_decision_template_v2',isTemplate:true,mode:'decision',
+   title:'这个 AI 思路图工具第一版应该做到什么程度？',
+   context:'我希望作品集能体现产品思维与 AI 能力，但需要控制实现范围。',
+   goal:'优先完成可测试的版本，再依据体验决定下一步投入。',
+   createdAt:time,updatedAt:time,
+   nodes:[
+    {
+     id:'dt_a',title:'基础结构 + 单次 AI 检查',
+     facts:['结构化卡片与导出路径可以先独立完成','AI 检查可以在基础交互稳定后接入'],
+     costs:[{certainty:'较高可能',text:'需要定义稳定的分析输入格式'}],
+     risks:[{certainty:'中等可能',text:'AI 输出仍需要多轮测试'}],
+     returns:[{certainty:'较高可能',text:'兼顾完成度与 AI 产品亮点'}],
+     children:[
+      {
+       id:'dt_a1',title:'先完成结构化卡片交互',
+       facts:['两种模式的卡片规则已经明确'],
+       costs:[{certainty:'已确定',text:'需要继续测试表单和层级体验'}],
+       risks:[{certainty:'较低可能',text:'卡片内容较多，手机端会显得拥挤'}],
+       returns:[{certainty:'较高可能',text:'能够先验证核心使用流程'}],
+       children:[
+        {
+         id:'dt_a1a',title:'邀请自己完成一次真实测试',
+         facts:['真实问题比占位文本更容易暴露体验问题'],
+         costs:[{certainty:'已确定',text:'需要花时间完整填写一条路径'}],
+         risks:[{certainty:'较低可能',text:'会发现仍有需要返工的交互'}],
+         returns:[{certainty:'较高可能',text:'能获得明确的下一轮调整方向'}],
+         children:[]
+        }
+       ]
+      },
+      {
+       id:'dt_a2',title:'预留 AI 读取的导出结构',
+       facts:['当前路径最多包含起点和五层卡片'],
+       costs:[{certainty:'较高可能',text:'需要整理字段与层级编号'}],
+       risks:[{certainty:'中等可能',text:'整图内容过长不适合直接提交'}],
+       returns:[{certainty:'较高可能',text:'后续可直接接入分析功能'}],
+       children:[
+        {
+         id:'dt_a2a',title:'优先分析当前路径而非整图',
+         facts:['单条路径的信息关系更清晰'],
+         costs:[{certainty:'较低可能',text:'用户需要主动选择关注的分支'}],
+         risks:[{certainty:'较低可能',text:'可能遗漏其他路径之间的比较'}],
+         returns:[{certainty:'较高可能',text:'能控制输入长度和分析质量'}],
+         children:[]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     id:'dt_b',title:'先只做基础结构',
+     facts:['无需处理 AI 接口与分析结果'],
+     costs:[{certainty:'已确定',text:'第一版没有 AI 功能展示'}],
+     risks:[{certainty:'较高可能',text:'作品集辨识度不足'}],
+     returns:[{certainty:'较高可能',text:'更容易迅速完成与发布'}],
+     children:[
+      {
+       id:'dt_b1',title:'先验证用户是否愿意持续填写',
+       facts:['工具价值首先来自整理过程本身'],
+       costs:[{certainty:'较高可能',text:'需要设计真实测试任务'}],
+       risks:[{certainty:'中等可能',text:'用户觉得填写成本太高'}],
+       returns:[{certainty:'较高可能',text:'能判断功能是否值得继续深化'}],
+       children:[
+        {
+         id:'dt_b1a',title:'减少非必要字段',
+         facts:['字段越多，首次使用门槛越高'],
+         costs:[{certainty:'较低可能',text:'部分信息可能不够完整'}],
+         risks:[{certainty:'中等可能',text:'结构化程度下降'}],
+         returns:[{certainty:'中等可能',text:'提高开始填写的意愿'}],
+         children:[]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     id:'dt_c',title:'一开始完成完整产品',
+     facts:['需要同时处理卡片、AI、分享与更完整的规则'],
+     costs:[{certainty:'已确定',text:'开发范围明显扩大'}],
+     risks:[{certainty:'较高可能',text:'长期停留在未完成状态'}],
+     returns:[{certainty:'较低可能',text:'初版功能覆盖更全面'}],
+     children:[
+      {
+       id:'dt_c1',title:'拆分成阶段计划',
+       facts:['复杂功能可以按优先级逐步加入'],
+       costs:[{certainty:'中等可能',text:'需要反复调整规划'}],
+       risks:[{certainty:'较低可能',text:'阶段目标仍可能扩大'}],
+       returns:[{certainty:'较高可能',text:'避免一次性承担全部复杂度'}],
+       children:[]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   id:'builtin_thought_template_v2',isTemplate:true,mode:'thought',
+   title:'这次分享反馈不多，是不是说明我不值得继续做？',
+   context:'我看到这一次发布后的互动数量比自己期待的少。',
+   subjective:'我把一次反馈偏少，继续推成了长期不会有人喜欢。',
+   goal:'先复盘可调整的内容，再观察下一次结果，而不是立刻下结论。',
+   steps:['记录本次标题、封面和发布时间','准备一篇不同方向的小内容','发布后只记录结果，不提前推断长期结论'],
+   createdAt:time,updatedAt:time,
+   nodes:[
+    {
+     id:'tt_a',title:'是不是大家根本不喜欢我的内容？',
+     fact:'这一次互动数量较少，但我没有得到所有读者的明确评价。',
+     subjective:'我把一次表现直接等同于所有人的态度。',
+     action:'复盘标题、封面与选题是否清晰。',
+     steps:['写下这篇内容的目标受众','检查标题是否准确表达主题'],
+     children:[
+      {
+       id:'tt_a1',title:'是不是我的表达方式不够好？',
+       fact:'我目前只观察到互动偏少，还没有具体反馈指向表达问题。',
+       subjective:'我在缺少证据时，先把问题归因到了能力不足。',
+       action:'找一位可信的人阅读并给出具体意见。',
+       steps:['选出一段最想改进的文字','询问对方哪里看不明白'],
+       children:[
+        {
+         id:'tt_a1a',title:'是不是别人不好意思告诉我真实看法？',
+         fact:'我还没有提出具体、便于回答的问题。',
+         subjective:'我提前假设对方会隐瞒负面评价。',
+         action:'使用具体问题获得可操作反馈。',
+         steps:['询问“哪个部分最难理解？”'],
+         children:[]
+        }
+       ]
+      },
+      {
+       id:'tt_a2',title:'是不是选题没有人关心？',
+       fact:'一次内容的数据无法覆盖所有选题的表现。',
+       subjective:'我把一次选题结果扩大为整体方向失败。',
+       action:'尝试一条主题更聚焦的新内容。',
+       steps:['列出三个小主题','选择最容易完成的一条'],
+       children:[]
+      }
+     ]
+    },
+    {
+     id:'tt_b',title:'是不是关注我的人会很快离开？',
+     fact:'目前没有看到明确的集中取关信息。',
+     subjective:'我因担心不符合期待，而提前想到了失去关注。',
+     action:'先维持自己的发布节奏，不追踪每一次细小变化。',
+     steps:['规定一天只查看一次数据'],
+     children:[
+      {
+       id:'tt_b1',title:'是不是我必须一直输出同一种内容？',
+       fact:'关注一个账号不代表只接受单一主题。',
+       subjective:'我把别人的期待想成了固定规则。',
+       action:'保留主线，同时允许少量探索。',
+       steps:['确定一条主线主题','安排一次探索内容'],
+       children:[
+        {
+         id:'tt_b1a',title:'是不是探索内容会破坏整体形象？',
+         fact:'个人作品本来就可以体现多个侧面。',
+         subjective:'我把尝试新内容想成了不可逆的后果。',
+         action:'用小范围发布验证实际反馈。',
+         steps:['先完成一条低成本探索内容'],
+         children:[]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     id:'tt_c',title:'是不是我应该立刻停下来？',
+     fact:'我仍然能够调整内容并继续观察。',
+     subjective:'我想在不确定时用停止行动来减少不安。',
+     action:'先完成一次小规模改进，再决定下一步。',
+     steps:['只改一个最明显的问题','记录改动后的反馈'],
+     children:[
+      {
+       id:'tt_c1',title:'继续尝试会不会更失望？',
+       fact:'继续尝试可能有结果波动，但也能提供更多信息。',
+       subjective:'我把可能的失望看成了不应尝试的理由。',
+       action:'把目标从“证明自己”改为“获得一次新观察”。',
+       steps:['写下本次只想验证的问题'],
+       children:[]
+      }
+     ]
+    }
+   ]
+  }
+ ];
+}
+function ensureTemplates(list){
+ const templates=templateProjects();
+ const ids=new Set(list.map(p=>p.id));
+ let changed=false;
+ templates.forEach(t=>{if(!ids.has(t.id)){list.push(t);changed=true}});
+ if(changed)localStorage.setItem(STORAGE,JSON.stringify(list));
+ return list;
+}
+function resetTemplateById(templateId){
+ const fresh=templateProjects().find(p=>p.id===templateId);
+ const index=projects.findIndex(p=>p.id===templateId);
+ if(fresh&&index>=0){fresh.versions=projects[index].versions||[];projects[index]=fresh;saveStore();return fresh}
+ return null;
+}
+
+let projects=ensureTemplates(readStore()), page='home', homeMode=null, creationMode='decision', currentId=null, level=1;
+let overlay=null, pendingDelete=null, typingTimer=null, spotlightId=null, previewTimers=[];
+let expandedCards=new Set();
+let locatorHidden=false;
+let locatorGroupCursor=null;
+let locatorPhase='absent';
+let locatorViewKey='';
+let locatorWasEligible=false;
+let locatorExitFromCollapsed=false;
+let locatorAnimTimer=null;
+let locatorAnimTimer2=null;
+
+function id(prefix='x'){return prefix+'_'+Date.now()+'_'+Math.floor(Math.random()*100000)}
+function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function readStore(){try{return JSON.parse(localStorage.getItem(STORAGE)||'[]')}catch(e){return []}}
+function saveStore(){localStorage.setItem(STORAGE,JSON.stringify(projects))}
+function nowText(ts){const d=new Date(ts),z=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}月${d.getDate()}日 ${z(d.getHours())}:${z(d.getMinutes())}`}
+function project(){return projects.find(p=>p.id===currentId)}
+function theme(){
+ const active = page==='home' ? homeMode : page==='create' ? creationMode : project()?.mode;
+ return active==='thought' ? 'theme-thought' : active==='decision' ? 'theme-decision' : '';
+}
+function notify(t){
+ const root=document.getElementById('toast');
+ root.className=theme();
+ root.innerHTML=`<div class="center-toast">${esc(t)}</div>`;
+ setTimeout(()=>{root.innerHTML='';root.className=''},1900)
+}
+function allNodes(nodes,out=[]){nodes.forEach(n=>{out.push(n);allNodes(n.children||[],out)});return out}
+function countNodes(p){return allNodes(p.nodes,[]).length}
+function nodeAt(nodes,nodeId,parent=null,depth=1){
+ for(let i=0;i<nodes.length;i++){const n=nodes[i];if(n.id===nodeId)return {node:n,parent,arr:nodes,index:i,depth};const got=nodeAt(n.children||[],nodeId,n,depth+1);if(got)return got}
+ return null;
+}
+function depthNodes(nodes,target,d=1,parent=null,out=[]){
+ nodes.forEach(n=>{if(d===target)out.push({node:n,parent});else depthNodes(n.children||[],target,d+1,n,out)});return out;
+}
+function descendantIds(n,out=[]){out.push(n.id);(n.children||[]).forEach(c=>descendantIds(c,out));return out}
+function groupIndexFor(parent,p,atLevel){
+ if(atLevel===1)return 0;
+ const parents=depthNodes(p.nodes,atLevel-1);
+ return Math.max(0,parents.findIndex(x=>x.node.id===parent.id))%9;
+}
+function lineCount(p,d){return depthNodes(p.nodes,d).length}
+
+const certaintyOrder=['已确定','较高可能','中等可能','较低可能','仅是担忧'];
+function sortRated(items=[]){return [...items].filter(x=>x&&String(x.text||'').trim()).sort((a,b)=>certaintyOrder.indexOf(a.certainty)-certaintyOrder.indexOf(b.certainty))}
+function decisionData(n){return {title:n.title||'',note:n.note||'',facts:Array.isArray(n.facts)?n.facts:[],costs:Array.isArray(n.costs)?n.costs:[],risks:Array.isArray(n.risks)?n.risks:[],returns:Array.isArray(n.returns)?n.returns:[]}}
+function thoughtData(n){return {title:n.title||'',note:n.note||'',fact:n.fact||'',subjective:n.subjective||'',action:n.action||'',steps:Array.isArray(n.steps)?n.steps:[]}}
+function tooLong(value,max){return String(value||'').trim().length>max}
+function contentError(value,label,required=false,max=150){
+ const v=String(value||'').trim();
+ if(!v)return required?`${label}不能为空`:'';
+ if([...v].length<2)return '描述得稍微详细一点，会更有帮助。';
+ if(/^[0-9０-９\s.,，。+\-]+$/.test(v))return '请用文字描述这条内容，而不是只填写数字。';
+ if(/^[\p{P}\p{S}\s]+$/u.test(v))return '请填写一段能够表达实际意思的内容。';
+ if([...v].length>max)return `${label}最多 ${max} 字`;
+ return '';
+}
+function checkRootContent(p,title,context,goal,subjective='',steps=[]){
+ let err=contentError(title,'起点标题',true,80); if(err)return err;
+ err=contentError(context,p.mode==='thought'?'实际观察到的事实':'已知背景',p.mode==='thought',150); if(err)return err;
+ err=contentError(goal,p.mode==='thought'?'行动方向':'目标或约束',p.mode==='thought',150); if(err)return err;
+ if(p.mode==='thought'){err=contentError(subjective,'推测或担忧',true,150); if(err)return err;}
+ for(const step of steps){err=contentError(step,'行动步骤',true,100); if(err)return err;}
+ return '';
+}
+function actionStepsFilled(n){return Array.isArray(n.steps)&&n.steps.some(x=>String(x||'').trim())}
+function isStash(n){return !!n?.isStash}
+function countStashes(p){return allNodes(p.nodes,[]).filter(n=>isStash(n)).length}
+function branchContainer(p,parentId){return parentId?nodeAt(p.nodes,parentId).node.children:p.nodes}
+function collectPathNodes(p,nodeId){function seek(nodes,target,trail=[]){for(const n of nodes){if(n.id===target)return trail.concat(n);const got=seek(n.children||[],target,trail.concat(n));if(got)return got}return null}return nodeId?(seek(p.nodes,nodeId,[])||[]):[]}
+function structuredList(items){const clean=sortRated(items);return clean.length?`<div class="item-list">${clean.map(x=>`<div class="structured-item"><span class="certainty">${esc(x.certainty)}</span><span>${esc(x.text)}</span></div>`).join('')}</div>`:`<div class="tiny">未填写</div>`}
+function actionList(steps=[]){const clean=steps.filter(x=>String(x||'').trim());return clean.length?`<div class="action-steps">${clean.map((x,i)=>`<div class="action-step"><span class="step-num">${i+1}.</span><span>${esc(x)}</span></div>`).join('')}</div>`:''}
+function decisionSummary(n){const d=decisionData(n);return `<div class="branch-summary"><div class="info-block"><div class="info-title">事实与条件</div><div class="info-text">${d.facts.length?d.facts.map(x=>esc(x)).join('<br>'):(d.note?esc(d.note):'<span class="tiny">未填写</span>')}</div></div><div class="info-block"><div class="info-title">成本</div>${structuredList(d.costs)}</div><div class="info-block"><div class="info-title">风险</div>${structuredList(d.risks)}</div><div class="info-block"><div class="info-title">回报</div>${structuredList(d.returns)}</div></div>`}
+function thoughtSummary(n){if(isStash(n))return `<div class="stash-hint">这条念头暂时停在这里。等你准备好时，再回来拆出事实与行动。</div>`;const d=thoughtData(n);return `<div class="branch-summary"><div class="info-block thought-fact"><div class="info-title">我观察到的事实</div><div class="info-text">${esc(d.fact||d.note||'未填写')}</div></div><div class="info-block thought-subjective"><div class="info-title">我加入的推测或担忧</div><div class="info-text">${esc(d.subjective||'未填写')}</div></div><div class="info-block thought-action"><div class="info-title">我现在能做什么</div><div class="info-text">${esc(d.action||'未填写')}</div>${actionList(d.steps)}</div></div>`}
+function rootStructuredHTML(p){if(p.mode==='decision')return `<div class="root-structured"><div class="info-block"><div class="info-title">已知背景</div><div class="info-text">${esc(p.context||'未填写')}</div></div><div class="info-block"><div class="info-title">目标或约束</div><div class="info-text">${esc(p.goal||'未填写')}</div></div></div>`;return `<div class="root-structured"><div class="info-block thought-fact"><div class="info-title">实际观察到的事实</div><div class="info-text">${esc(p.context||'未填写')}</div></div><div class="info-block thought-subjective"><div class="info-title">我加入的推测或担忧</div><div class="info-text">${esc(p.subjective||'尚未补充')}</div></div><div class="info-block thought-action"><div class="info-title">我现在能做什么</div><div class="info-text">${esc(p.goal||'未填写')}</div>${actionList(p.steps||[])}</div></div>`}
+function blankRated(){return [{certainty:'已确定',text:''}]}
+function ratedTotal(items=[]){return items.reduce((sum,item)=>sum+String(item?.text||'').trim().length,0)}
+function ratedLimitText(items=[]){const used=ratedTotal(items);return used?`最多 5 条 · 合计 ${used} / 150 字`:'最多 5 条 · 合计最多 150 字'}
+function rateRows(key,items=[]){const rows=items.length?items:blankRated();return `<div class="line-items">${rows.map((item,i)=>`<div class="line-row"><select class="select" data-kind="${key}" data-index="${i}" data-field="certainty">${certaintyOrder.map(c=>`<option ${item.certainty===c?'selected':''}>${c}</option>`).join('')}</select><input class="row-input" data-kind="${key}" data-index="${i}" data-field="text" maxlength="150" value="${esc(item.text||'')}" placeholder="填写一条内容"><button type="button" class="row-delete" onclick="App.removeRated('${key}',${i})">×</button></div>`).join('')}</div>`}
+function stepRows(steps=[]){const rows=steps.length?steps:[''];return `<div class="line-items">${rows.map((text,i)=>`<div class="line-row step-row"><input class="row-input" data-step="${i}" maxlength="100" value="${esc(text||'')}" placeholder="第 ${i+1} 个可行动步骤"><button type="button" class="row-delete" onclick="App.removeStep(${i})">×</button></div>`).join('')}</div>`}
+function captureBranchDraft(){if(!overlay||overlay.type!=='branch')return;const d=overlay.data||{};const title=document.getElementById('branch-title');if(title)d.title=title.value;if(project().mode==='decision'){d.facts=(document.getElementById('decision-facts')?.value||'').split('\n').map(x=>x.trim()).filter(Boolean);['costs','risks','returns'].forEach(kind=>{const rows=[...document.querySelectorAll(`[data-kind="${kind}"][data-field="text"]`)];d[kind]=rows.map((row,i)=>({text:row.value,certainty:document.querySelector(`[data-kind="${kind}"][data-index="${i}"][data-field="certainty"]`)?.value||'中等可能'}))})}else{d.fact=document.getElementById('thought-fact')?.value||'';d.subjective=document.getElementById('thought-subjective')?.value||'';d.action=document.getElementById('thought-action')?.value||'';d.steps=[...document.querySelectorAll('[data-step]')].map(x=>x.value)}overlay.data=d}
+
+let heroRevealHandler=null;
+function setupHeroDescriptionReveal(){
+ if(heroRevealHandler){window.removeEventListener('scroll',heroRevealHandler);heroRevealHandler=null}
+ const desc=document.querySelector('.hero-desc');
+ if(page!=='home'||!desc)return;
+ heroRevealHandler=()=>{
+  if(window.scrollY>10){
+   desc.classList.add('is-visible');
+   window.removeEventListener('scroll',heroRevealHandler);
+   heroRevealHandler=null;
+  }
+ };
+ if(window.scrollY>10){desc.classList.add('is-visible');heroRevealHandler=null;return}
+ window.addEventListener('scroll',heroRevealHandler,{passive:true});
+}
+function clearLocatorAnimation(){
+ clearTimeout(locatorAnimTimer); clearTimeout(locatorAnimTimer2);
+ locatorAnimTimer=null; locatorAnimTimer2=null;
+}
+function locatorContext(){
+ if(page!=='editor'||!project())return {eligible:false,key:''};
+ const eligible=depthNodes(project().nodes,level).length>=5;
+ return {eligible,key:eligible?`${currentId}:${level}`:''};
+}
+function prepareLocatorRenderState(){
+ if(page!=='editor'){
+  clearLocatorAnimation();
+  locatorPhase='absent'; locatorViewKey=''; locatorWasEligible=false; locatorHidden=false; locatorGroupCursor=null;
+  return;
+ }
+ const ctx=locatorContext();
+ const entering=ctx.eligible && (!locatorWasEligible || locatorViewKey!==ctx.key);
+ const leaving=!ctx.eligible && locatorWasEligible;
+ if(entering){
+  clearLocatorAnimation();
+  locatorPhase='entering';
+  locatorHidden=true;
+  locatorViewKey=ctx.key;
+  locatorGroupCursor=null;
+ }else if(leaving){
+  clearLocatorAnimation();
+  locatorExitFromCollapsed=locatorHidden;
+  locatorPhase='exiting';
+  locatorViewKey='';
+  locatorGroupCursor=null;
+ }else if(!ctx.eligible && locatorPhase!=='exiting'){
+  locatorPhase='absent';
+  locatorHidden=false;
+  locatorViewKey='';
+ }
+ locatorWasEligible=ctx.eligible;
+}
+function locatorRenderClass(){
+ if(locatorPhase==='entering')return 'is-collapsed is-arriving';
+ if(locatorPhase==='exiting')return locatorExitFromCollapsed?'is-collapsed':'';
+ return locatorHidden?'is-collapsed':'';
+}
+function runLocatorTransition(){
+ clearLocatorAnimation();
+ const nav=document.querySelector('.locator-nav');
+ if(!nav)return;
+ if(locatorPhase==='entering'){
+  /* 阶段 1：单独的 ‹ 先平缓滑入，并短暂停留。 */
+  requestAnimationFrame(()=>{if(nav.isConnected)nav.classList.remove('is-arriving')});
+  locatorAnimTimer=setTimeout(()=>{
+   const ctx=locatorContext();
+   if(!nav.isConnected || !ctx.eligible || ctx.key!==locatorViewKey)return;
+   /* 阶段 2：其余按钮滑入；组合中保留完整的 ‹ 按钮。 */
+   locatorHidden=false;
+   nav.classList.add('is-settling');
+   nav.classList.remove('is-collapsed');
+   locatorAnimTimer2=setTimeout(()=>{
+    if(!nav.isConnected || locatorPhase!=='entering')return;
+    /* 阶段 3：完整组合稳定停留，让用户看清当前状态。 */
+    locatorAnimTimer=setTimeout(()=>{
+     if(!nav.isConnected || locatorPhase!=='entering')return;
+     /* 阶段 4：‹ 按钮连同线框在原位渐隐。 */
+     nav.classList.add('is-toggle-fading-out');
+     locatorAnimTimer2=setTimeout(()=>{
+      if(!nav.isConnected || locatorPhase!=='entering')return;
+      /* 阶段 5：› 按钮连同线框在原位更快渐显。 */
+      nav.classList.remove('is-settling','is-toggle-fading-out');
+      locatorAnimTimer=setTimeout(()=>{
+       if(!nav.isConnected || locatorPhase!=='entering')return;
+       locatorPhase='ready';
+      },190);
+     },190);
+    },290);
+   },400);
+  },620);
+ }else if(locatorPhase==='exiting'){
+  if(locatorExitFromCollapsed){
+   /* 用户原本已经收起：只让 ‹ 平缓离开。 */
+   requestAnimationFrame(()=>{
+    if(!nav.isConnected)return;
+    locatorAnimTimer=setTimeout(()=>{
+     if(!nav.isConnected)return;
+     nav.classList.add('is-leaving');
+     locatorAnimTimer2=setTimeout(()=>{
+      if(locatorPhase==='exiting'){
+       locatorPhase='absent';
+       locatorHidden=false;
+       locatorExitFromCollapsed=false;
+       nav.remove();
+      }
+     },300);
+    },120);
+   });
+  }else{
+   /* 默认展开状态：四个定位按钮先离场，› 原位停顿 0.8 秒后再离场。 */
+   requestAnimationFrame(()=>{
+    if(!nav.isConnected)return;
+    nav.classList.add('is-exiting-expanded');
+    locatorAnimTimer=setTimeout(()=>{
+     if(!nav.isConnected || locatorPhase!=='exiting')return;
+     nav.classList.add('is-exiting-toggle');
+     locatorAnimTimer2=setTimeout(()=>{
+      if(locatorPhase==='exiting'){
+       locatorPhase='absent';
+       locatorHidden=false;
+       locatorExitFromCollapsed=false;
+       nav.remove();
+      }
+     },300);
+    },800);
+   });
+  }
+ }
+}
+function render(){
+ clearTimeout(typingTimer); clearPreviewTimers();
+ prepareLocatorRenderState();
+ const app=document.getElementById('app'); app.className=theme();
+ app.innerHTML=page==='home'?homeHTML():page==='create'?createHTML():editorHTML();
+ renderOverlay();
+ if(page==='create') typeHeading();
+ if(page==='home'){startPreviewCycle();setupHeroDescriptionReveal()}
+ if(page==='editor')runLocatorTransition();
+}
+function brandbar(){return `<header class="brandbar"><div class="brand">思路图</div><div class="signature">帮你理清问题</div></header>`}
+function clearPreviewTimers(){previewTimers.forEach(t=>clearTimeout(t));previewTimers=[]}
+function typePreview(el,text,speed=42){
+ if(!el)return; let i=0; el.textContent='';
+ const tick=()=>{ if(i<=text.length){el.textContent=text.slice(0,i++); previewTimers.push(setTimeout(tick,speed));} };
+ tick();
+}
+function previewSceneHTML(mode,animated=false){
+ const ex=examples[mode], isThought=mode==='thought';
+ const title=isThought?'“'+ex.title+'”':ex.title;
+ const label=isThought?'核心念头':'决策起点';
+ return `<div class="preview-window ${animated?'':'static'}" data-preview-mode="${mode}">
+   <div class="sample-root ${animated?'':'show'}"><strong class="preview-type" data-root>${animated?'':title}</strong><span class="preview-caption" data-caption>${animated?'':label}</span></div>
+   <div class="sample-list">${ex.nodes.map((n,i)=>`<div class="sample-mini ${animated?'':'show'}" data-node="${i}" style="border-left-color:var(--g1)"><span class="preview-type" data-text="${i}">${animated?'':(isThought?'“'+n.title+'”':n.title)}</span></div>`).join('')}</div>
+ </div>`;
+}
+function previewPanelHTML(){
+ const note='结构预览 · 同色为同源分支';
+ const suffix=homeMode?'':' · 两种模式交替展示';
+ return `<div class="hero-sample"><div class="tiny">${note}${suffix}</div><div id="preview-cycle-host"></div></div>`;
+}
+function startPreviewCycle(){
+ clearPreviewTimers();
+ if(page!=='home')return;
+ const host=document.getElementById('preview-cycle-host'); if(!host)return;
+ const first=homeMode||'decision';
+ const run=(mode)=>{
+  if(page!=='home')return;
+  const active=homeMode||mode;
+  host.innerHTML=previewSceneHTML(active,true);
+  const scene=host.querySelector('.preview-window');
+  const ex=examples[active], isThought=active==='thought';
+  const rootText=isThought?'“'+ex.title+'”':ex.title;
+  const captionText=isThought?'核心念头':'决策起点';
+  const texts=ex.nodes.map(n=>isThought?'“'+n.title+'”':n.title);
+  const rootStart=360, rootSpeed=34;
+  const captionStart=rootStart+rootText.length*rootSpeed+145;
+  const captionSpeed=54;
+  const firstBranchStart=captionStart+captionText.length*captionSpeed+240;
+  previewTimers.push(setTimeout(()=>scene.querySelector('.sample-root')?.classList.add('show'),255));
+  previewTimers.push(setTimeout(()=>typePreview(scene.querySelector('[data-root]'),rootText,rootSpeed),rootStart));
+  previewTimers.push(setTimeout(()=>typePreview(scene.querySelector('[data-caption]'),captionText,captionSpeed),captionStart));
+  texts.forEach((text,i)=>{
+   const box=scene.querySelector(`[data-node="${i}"]`);
+   const showAt=firstBranchStart+i*410;
+   previewTimers.push(setTimeout(()=>box?.classList.add('show'),showAt));
+   previewTimers.push(setTimeout(()=>typePreview(scene.querySelector(`[data-text="${i}"]`),text,32),showAt+145));
+  });
+  previewTimers.push(setTimeout(()=>scene?.classList.add('fade-out'),8000));
+  const next=homeMode?homeMode:(active==='decision'?'thought':'decision');
+  previewTimers.push(setTimeout(()=>run(next),9000));
+ };
+ run(first);
+}
+function homeHTML(){
+ const selected = homeMode ? modes[homeMode] : null;
+ const arr = homeMode ? projects.filter(p=>p.mode===homeMode).sort((a,b)=>b.updatedAt-a.updatedAt) : [];
+ const userGraphCount = homeMode ? arr.filter(p=>!p.isTemplate).length : 0;
+ const heroDesc = homeMode==='decision'
+  ? '从一个问题出发，比较条件、成本与回报，梳理选择路径。'
+  : homeMode==='thought'
+   ? '从一个念头出发，区分事实与担忧，找到能开始的一步。'
+   : '从一个起点出发，梳理选择路径，或慢慢理清反复出现的念头。';
+ return `${brandbar()}
+ <main class="stage">
+  <section class="hero">
+   <div><span class="overline">轻量思路整理工具</span><div class="byline">by @Verseforge</div>
+    <h1><span>把脑子里的</span><span>反复推演</span><span class="reveal-line">摊开来看。</span></h1>
+    <p class="hero-desc">${heroDesc}</p>
+   </div>
+   ${previewPanelHTML()}
+  </section>
+  ${!homeMode ? `
+   <div class="section-title" id="mode-choice-anchor"><h2>你想整理哪一种问题？</h2><p>选择后进入对应空间</p></div>
+   <section class="mode-grid">
+    <button class="mode-card" onclick="App.selectMode('decision')"><div class="mode-id">01 · 理性梳理</div><h3>决策推演</h3><p>${modes.decision.home}</p></button>
+    <button class="mode-card" onclick="App.selectMode('thought')"><div class="mode-id">02 · 温和整理</div><h3>念头整理</h3><p>${modes.thought.home}</p></button>
+   </section>` : `
+   <div class="section-title" id="mode-choice-anchor"><h2>你想整理哪一种问题？</h2><p>当前已选择 ${selected.name}</p></div>
+   <section class="mode-grid">
+    ${homeMode==='decision'
+      ? `<button class="mode-card current" onclick="App.openCreate('decision')"><div class="mode-state">当前模式</div><h3>创建决策推演图</h3><p>${modes.decision.home}</p></button>
+         <button class="mode-card switch" onclick="App.selectMode('thought')"><div class="mode-state">切换模式</div><h3>念头整理</h3><p>${modes.thought.home}</p></button>`
+      : `<button class="mode-card switch" onclick="App.selectMode('decision')"><div class="mode-state">切换模式</div><h3>决策推演</h3><p>${modes.decision.home}</p></button>
+         <button class="mode-card current" onclick="App.openCreate('thought')"><div class="mode-state">当前模式</div><h3>创建念头整理图</h3><p>${modes.thought.home}</p></button>`}
+   </section>
+   <section class="history">
+    <div class="history-head"><div class="history-title-actions"><h2>我的${selected.name}图</h2><button class="mini import-btn" onclick="App.openImport()">导入文字版</button></div><span class="storage-note">自动保存在当前浏览器中</span></div>
+    <div class="history-list">
+      ${arr.length?arr.map(p=>`<div class="record"><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?'三层结构 · 可进入体验 · 不可删除':`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions"><button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
+    </div>
+    ${userGraphCount>=5?`<button class="history-return" onclick="App.backToModeChoice()">↑ 返回模式选择</button>`:''}
+   </section>`}
+ </main>`;
+}
+function createHTML(){
+ const m=modes[creationMode];
+ return `${brandbar()}
+ <main class="stage"><div class="create-wrap"><button class="back" onclick="App.home()">← 返回首页</button>
+  <div class="create-panel"><span class="pill">${m.name}</span><h1 id="typed" class="typed"><span class="cursor"></span></h1>
+   <div class="field"><label>${m.labels[0]}<small>最多 80 字</small></label><input class="input" id="create-title" maxlength="80" placeholder="${m.placeholders[0]}"></div>
+   <div class="field"><label>${m.labels[1]}<small>可选 · 最多 150 字</small></label><textarea class="textarea" id="create-context" maxlength="150" placeholder="${m.placeholders[1]}"></textarea></div>
+   <div class="field"><label>${m.labels[2]}<small>可选 · 最多 150 字</small></label><textarea class="textarea" id="create-goal" maxlength="150" placeholder="${m.placeholders[2]}"></textarea></div>
+   <div class="form-actions"><button class="btn btn-primary" onclick="App.create()">创建${m.name}图</button><button class="btn btn-secondary" onclick="App.home()">返回</button></div>
+  </div></div></main>`;
+}
+function editorHTML(){
+ const p=project(),m=modes[p.mode], nodes=depthNodes(p.nodes,level), total=countNodes(p);
+ const nextHasNodes = level<5 && lineCount(p,level+1)>0;
+ const crowded = nodes.length>4;
+ const allExpanded = crowded && nodes.every(item=>expandedCards.has(item.node.id));
+ const visibleImpact=[];
+ return `${brandbar()}
+ <main class="workspace">
+  <div class="toolbar"><div class="toolbar-left"><button class="back-square" onclick="App.home()">←</button><span class="pill" style="margin:0">${m.name}</span><span class="saved">已自动保存 · ${nowText(p.updatedAt)}</span></div>
+  <div class="toolbar-right"><button class="btn btn-secondary" onclick="App.saveVersion()">保存版本</button><button class="btn btn-secondary" onclick="App.openVersions()">历史版本</button><button class="btn btn-secondary" onclick="App.exportFull()">导出整图</button>${p.isTemplate?`<button class="btn btn-secondary" onclick="App.askResetTemplate()">恢复模板</button>`:`<button class="btn btn-secondary" onclick="App.clearGraph()">清空</button>`}<button class="btn btn-disabled" onclick="App.aiInfo()">✦ AI 分析师</button></div></div>
+  <div class="workgrid">
+   <aside class="side"><h3>当前结构</h3><div class="guidance">${p.mode==='decision'?'补充事实、成本、风险和回报，比较不同选择。':'区分事实与担忧，并写下能开始做的一步。'}</div>
+    <h3>范围限制</h3><div class="limit"><span class="limit-row">每张卡片最多延伸 3 个分支</span><span class="limit-row">最多 5 个层级</span><span class="limit-row">整图最多 39 个分支</span><br><span class="limit-row">同层同源分支使用同一颜色。</span></div>
+   </aside>
+   <section class="canvas">
+    <div class="root"><div class="root-top"><div><div class="root-label">${m.start}${p.isTemplate?`<span class="template-inline">示例模板</span>`:''}</div><h2>${esc(p.title)}</h2>${rootStructuredHTML(p)}</div><button class="mini" onclick="App.editRoot()">编辑起点</button></div></div>
+    <nav class="levelbar">${[1,2,3,4,5].map(d=>`<button class="level-tab ${level===d?'active':''} ${d>1&&lineCount(p,d)===0?'unavailable':''}" onclick="App.tryLevel(${d})">第${['一','二','三','四','五'][d-1]}层级 ${lineCount(p,d)?`· ${lineCount(p,d)}`:''}</button>`).join('')}</nav>
+    <div class="level-info"><span>${level===1?'从起点产生的分支':`第 ${level} 层分支`}</span><div class="level-info-right"><span>总分支 ${total} / 39</span>${crowded?`<button class="fold-control" onclick="App.toggleAllDetails(${level},${allExpanded})">${allExpanded?'全部折叠':'全部展开'}</button>`:''}${level===1?`<button class="mini" onclick="App.addBranch(null)">+ 新增同层分支</button>`:''}</div></div>
+    ${nodes.length?`<div class="card-list">${nodes.map(item=>branchHTML(item,p,level,visibleImpact,crowded)).join('')}</div>`:`<div class="no-level"><p>${level===1?`从${p.mode==='decision'?'一个可能的选择':'一个想继续整理的念头'}开始。`:'这一层还没有分支。'}</p>${level===1?`<button class="btn btn-primary" onclick="App.addBranch(null)">${m.branch}</button>`:''}</div>`}
+    <div class="level-bottom-nav">${level>1?`<button class="btn btn-secondary" onclick="App.switchLevel(${level-1},true)">← 上一层级</button>`:''}${level<5?`<button class="btn btn-secondary" onclick="App.tryNextLevel(${level+1})">下一层级 →</button>`:''}</div>
+    <div class="boundary ${p.mode}">${p.mode==='decision'?'尽量基于已知事实比较成本、风险与回报，再选择值得继续推进的方向。':'念头不一定等于事实。先区分你观察到的情况与加入的担忧，再寻找一个能够开始的小行动。'}</div>
+    ${(crowded||locatorPhase==='exiting')?`<div class="locator-nav ${locatorRenderClass()}" aria-label="当前层级快速定位"><div class="locator-rail"><button class="locator-btn" onclick="App.jumpLayerEdge('top')" aria-label="到本层开头">┬</button><button class="locator-btn" onclick="App.jumpGroup(-1)" aria-label="上一组同源分支">↑</button><span class="locator-toggle-slot"><button class="locator-btn fold locator-middle locator-dismiss-back" onclick="App.collapseLocator()" aria-label="收起定位导航">‹</button><button class="locator-btn fold locator-middle locator-dismiss-forward" onclick="App.collapseLocator()" aria-label="收起定位导航">›</button></span><button class="locator-btn" onclick="App.jumpGroup(1)" aria-label="下一组同源分支">↓</button><button class="locator-btn" onclick="App.jumpLayerEdge('bottom')" aria-label="到本层结尾">┴</button></div><button class="locator-btn locator-open fold" onclick="App.expandLocator()" aria-label="展开定位导航">‹</button></div>`:''}
+   </section>
+  </div>
+ </main>`;
+}
+function branchHTML(item,p,d,impact,crowded=false){
+ const n=item.node, parent=item.parent, ci=groupIndexFor(parent,p,d), impacted=false, children=(n.children||[]).length;
+ const loc=d===1?'来自起点':`来自第${['一','二','三','四'][d-2]}层级 · ${p.mode==='thought'?'“'+esc(parent.title)+'”':esc(parent.title)}`;
+ const found=nodeAt(p.nodes,n.id), siblings=found.arr;
+ if(p.mode==='thought'&&isStash(n)){
+  return `<article data-id="${n.id}" data-group-start="${found.index===0?'1':'0'}" class="branch stash ${spotlightId===n.id?'spotlight':''}" style="--accent:${COLORS[ci]}"><div class="parent-ref">${loc}${d>1?`　<button class="act" onclick="App.goParent('${parent.id}',${d-1})">↩ 返回上级</button>`:''}</div><div class="branch-head"><div style="min-width:0;flex:1"><span class="stash-label">暂存 · 尚未整理</span><div class="branch-title">${esc(n.title)}</div>${n.stashNote?`<div class="branch-note">${esc(n.stashNote)}</div>`:''}<div class="stash-hint">这条念头暂时停在这里。等你准备好时，再回来拆出事实与行动。</div></div><div class="actions"><button class="act" ${found.index===0?'disabled':''} onclick="App.move('${n.id}',-1)">↑</button><button class="act" ${found.index===siblings.length-1?'disabled':''} onclick="App.move('${n.id}',1)">↓</button><button class="act" onclick="App.continueStash('${n.id}')">继续整理</button><button class="act" onclick="App.requestDelete('${n.id}')">删除</button></div></div></article>`;
+ }
+ const summary=p.mode==='decision'?decisionSummary(n):thoughtSummary(n);
+ const expanded=!crowded || expandedCards.has(n.id);
+ return `<article data-id="${n.id}" data-group-start="${found.index===0?'1':'0'}" class="branch ${impacted?'impacted':''} ${spotlightId===n.id?'spotlight':''}" style="--accent:${COLORS[ci]}"><div class="parent-ref">${loc}${d>1?`　<button class="act" onclick="App.goParent('${parent.id}',${d-1})">↩ 返回上级</button>`:''}</div>
+ <div class="branch-head"><div style="min-width:0;flex:1"><div class="branch-title">${esc(n.title)}</div>${crowded?`<button class="act detail-toggle" onclick="App.toggleDetails('${n.id}')">${expanded?'收起详情':'展开详情'}</button>`:''}${expanded?summary:''}</div>
+ <div class="actions"><button class="act" ${found.index===0?'disabled':''} onclick="App.move('${n.id}',-1)">↑</button><button class="act" ${found.index===siblings.length-1?'disabled':''} onclick="App.move('${n.id}',1)">↓</button><button class="act" onclick="App.editBranch('${n.id}')">编辑</button><button class="act" onclick="App.requestDelete('${n.id}')">删除</button></div></div>
+ <div class="card-bottom">${children?`<button class="child-link" onclick="App.showChildren('${n.id}')">已有 ${children} 条下级分支</button>`:`<span class="child-count">暂无下级分支</span>`}<div class="actions"><button class="act" onclick="App.exportPath('${n.id}')">导出此路径</button><button class="act" onclick="App.addSibling('${n.id}')">+ 同源分支</button><button class="act" onclick="App.addBranch('${n.id}')">+ 下级分支</button></div></div></article>`;
+}
+function typeHeading(){
+ const el=document.getElementById('typed'); if(!el)return;
+ const text=modes[creationMode].create; let i=0;
+ const write=()=>{el.innerHTML=esc(text.slice(0,i))+`<span class="cursor"></span>`;if(i<text.length){i++;typingTimer=setTimeout(write,62)}};
+ typingTimer=setTimeout(write,160);
+}
+function overlayHTML(){
+ if(!overlay)return '';
+ if(overlay.type==='example'){
+  const ex=examples[overlay.mode],m=modes[overlay.mode];
+  return `<div class="mask"><div class="modal large"><span class="pill">${m.name} · 只读示例</span><h3 style="margin-top:6px">${overlay.mode==='thought'?'“'+ex.title+'”':ex.title}</h3><p>${esc(ex.context)}<br>${esc(ex.goal)}</p><div>${ex.nodes.map((n,i)=>`<div class="readonly-card" style="--accent:${COLORS[0]}"><b>${overlay.mode==='thought'?'“'+esc(n.title)+'”':esc(n.title)}</b>${overlay.mode==='decision'?decisionSummary(n):thoughtSummary(n)}</div>`).join('')}</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">关闭示例</button><button class="btn btn-primary" onclick="App.openCreate('${overlay.mode}')">新建${m.name}图</button></div></div></div>`;
+ }
+ if(overlay.type==='branch'||overlay.type==='root'){
+  const p=project(),m=modes[p.mode], edit=overlay.type==='branch'&&overlay.editId, data=overlay.data||{}, rootData=overlay.draft||p;
+  if(overlay.type==='root'){
+   if(p.mode==='decision') return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="field"><label><span>问题标题</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>已知背景</span><small>可选 · 最多 150 字</small></label><textarea id="root-context" class="textarea" maxlength="150">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>目标或约束</span><small>可选 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
+   return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="form-guide">把念头写下来，再区分实际观察、加入的担忧，以及现在可以做的一件事。</div><div class="field"><label><span>此刻的念头</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>实际观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="root-context" class="textarea" maxlength="150">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="root-subjective" class="textarea" maxlength="150">${esc(rootData.subjective||'')}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="subform"><div class="subform-head"><div class="subform-title">拆成更小的行动步骤 <span class="subform-limit">可选 · 每步最多 100 字</span></div><button type="button" class="add-line" style="margin:0" onclick="App.addRootStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步；当念头分支继续增多时，系统会提醒你先把行动拆具体。</div><div id="root-step-list">${stepRows(rootData.steps||[]).replaceAll('App.removeStep','App.removeRootStep')}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
+  }
+  if(p.mode==='decision'){
+   const d=decisionData(data);
+   return `<div class="mask"><div class="modal large branch-form"><h3>${edit?'编辑选择':'添加一个选择'}</h3><div class="form-guide">一个选择至少需要写下支撑它的事实或条件。事实与条件最多 150 字；成本、风险、回报每类最多 5 条，且每类内容合计最多 150 字。</div><div class="field"><label><span>选择标题</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="例如：基础结构 + 单次 AI 检查"></div><div class="field"><label><span>事实与条件</span><small>必填 · 最多 150 字</small></label><textarea id="decision-facts" class="textarea" maxlength="150" placeholder="已经确定的信息，或这个选择成立的条件">${esc((d.facts||[]).join('\n') || d.note || '')}</textarea></div>${['costs','risks','returns'].map((key,i)=>`<div class="subform rated-subform"><div class="subform-limit-corner">${ratedLimitText(d[key])}</div><div class="subform-head"><div class="subform-title">${['成本','风险','回报'][i]}</div><button type="button" class="add-line" style="margin:0" onclick="App.addRated('${key}')">+ 添加</button></div><div class="subform-help">${['可能的付出、支出或牺牲','可能导致的不利后果或需要防范的问题','选择这条路径可能获得的收益'][i]}</div><div id="rows-${key}">${rateRows(key,d[key])}</div></div>`).join('')}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存选择</button></div></div></div>`;
+  }
+  const d=thoughtData(data), mustSteps=(countNodes(p)>=30 && !edit);
+  return `<div class="mask"><div class="modal large branch-form"><h3>${overlay.fromStash?'继续整理暂存念头':(edit?'编辑念头':'添加一个延伸念头')}</h3>${overlay.fromStash&&overlay.stashNote?`<div class="form-guide">暂存时记录：${esc(overlay.stashNote)}</div>`:''}<div class="form-guide">每一条延伸念头都需要回到事实、推测和行动；各项内容最多 150 字。${mustSteps?'当前内容已经很多，这一条需要同时拆出行动步骤。':''}</div><div class="field"><label><span>当前念头</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="写下此刻继续冒出来的一句话"></div><div class="field"><label><span>我观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="thought-fact" class="textarea" maxlength="150" placeholder="只写已经观察到或确认的信息">${esc(d.fact||d.note||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="thought-subjective" class="textarea" maxlength="150" placeholder="哪些结论是我在情绪中继续推出来的？">${esc(d.subjective)}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="thought-action" class="textarea" maxlength="150" placeholder="写下一件能够改变现状或验证判断的事情">${esc(d.action)}</textarea></div><div class="subform"><div class="subform-head"><div class="subform-title">把行动拆成小步骤${mustSteps?'<span class="required">至少一步</span>':''}</div><button type="button" class="add-line" style="margin:0" onclick="App.addStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步，让行动门槛更低，而不是继续向坏处推演。</div><div id="step-list">${stepRows(d.steps)}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存念头</button></div></div></div>`;
+ }
+ if(overlay.type==='actionGate'){
+  return `<div class="mask"><div class="modal support-modal"><h3>先停一下，看看你现在更需要什么</h3><p>这条念头已经延伸出了不少方向。继续往下之前，你可以先试着找一个能开始的小行动；如果现在确实想不到，也可以先把状态稳住，再回来整理。</p><ul class="gate-list">${overlay.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="modal-actions"><button class="btn btn-secondary" onclick="App.openSupportChoices()">我现在想不到办法</button><button class="btn btn-primary" onclick="App.openGateTarget()">我能先想一步</button></div></div></div>`;
+ }
+ if(overlay.type==='supportChoices') return `<div class="mask"><div class="modal large support-modal"><h3>现在想不到，也不用马上逼自己给出答案。</h3><p>先选一种更接近当前状态的方式。你可以暂停扩展念头，不必马上得出结论。</p><div class="support-options"><button class="support-option" onclick="App.openSupportGuide('steady')"><strong>先让自己舒服一点</strong><span>先把反复推演停一停，找一件让当下稍微容易承受的事。</span></button><button class="support-option" onclick="App.openSupportGuide('deadline')"><strong>事情确实有时间压力</strong><span>把焦虑拉回截止时间、最小推进步骤和可联系的人。</span></button><button class="support-option" onclick="App.openStashForm()"><strong>我现在只想先写下来</strong><span>保存为一条暂存念头，之后再回来继续整理。</span></button></div><button class="help-link" onclick="App.toggleSupportMore()">需要更多支持？</button>${overlay.showMore?`<div class="support-note">如果你此刻感到自己可能会受到伤害，或无法保证安全，请优先联系身边可信任的人，或寻求当地可获得的紧急与专业支持。</div>`:''}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">先停在这里</button></div></div></div>`;
+ if(overlay.type==='supportGuide') return `<div class="mask"><div class="modal large support-modal"><h3>${overlay.kind==='deadline'?'先把现实压力拆小一点':'先让当下稍微轻一点'}</h3>${overlay.kind==='deadline'?`<p>先不要求自己解决全部问题。现在只回答三件事：</p><ul class="gate-list"><li>最晚什么时候必须推进或回应？</li><li>接下来十分钟内，最小但必须完成的一步是什么？</li><li>有没有可以确认要求、说明情况或请求协助的人？</li></ul>`:`<p>这不是逃避问题，而是先让自己从反复推演里停一下。</p><ul class="gate-list"><li>暂停反复查看反馈或消息</li><li>离开屏幕几分钟，喝水或走动一下</li><li>把最担心的一句话先写下来，不继续往下推</li><li>联系一个你愿意说句话的人</li></ul>`}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.openStashForm()">先暂存这条念头</button><button class="btn btn-primary" onclick="App.openGateTarget()">填写一个行动步骤</button></div></div></div>`;
+ if(overlay.type==='stashForm') return `<div class="mask"><div class="modal large support-modal"><h3>先把这条念头暂存在这里</h3><p>它会保留在当前层级，但不能继续延伸。等你准备好时，可以把它转为完整念头卡片。</p><div class="field"><label><span>暂存念头</span><small><span class="required">必填</span> · 最多 150 字</small></label><textarea id="stash-title" class="textarea" maxlength="150" placeholder="写下此刻最卡住你的那句话">${esc(overlay.draftTitle||'')}</textarea></div><div class="field"><label><span>此刻最卡住的是什么？</span><small>可选 · 最多 150 字</small></label><textarea id="stash-note" class="textarea" maxlength="150" placeholder="可以留空，之后再慢慢整理">${esc(overlay.draftNote||'')}</textarea></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveStash()">暂存念头</button></div></div></div>`;
+ if(overlay.type==='delete'){
+  const texts=overlay.items.slice(0,4).map(t=>`<div class="warning-item">${esc(t)}</div>`).join('');
+  const extra=overlay.items.length>4?`<div class="tiny">……以及另外 ${overlay.items.length-4} 条下级分支</div>`:'';
+  const notice=overlay.items.length?`<p>确定要删除吗？删除此分支将导致以下下级分支一起被删除：</p><div class="warning-preview">${texts}${extra}</div>`:`<p>确定要删除这条分支吗？此操作无法恢复。</p>`;
+  return `<div class="mask"><div class="modal"><h3>删除这条分支？</h3>${notice}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.cancelDelete()">取消</button><button class="btn btn-danger" onclick="App.confirmDelete()">确定删除</button></div></div></div>`;
+ }
+ if(overlay.type==='confirmClear') return `<div class="mask"><div class="modal"><h3>清空全部分支？</h3><p>起点卡片会保留，下面已经整理的全部分支会被移除。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-danger" onclick="App.doClear()">确认清空</button></div></div></div>`;
+ if(overlay.type==='resetTemplate') return `<div class="mask"><div class="modal"><h3>恢复示例模板？</h3><p>你在这张模板中的编辑内容会被恢复为最初示例结构。自己新建的思路图不会受到影响。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.doResetTemplate()">恢复模板</button></div></div></div>`;
+
+ if(overlay.type==='deleteProject') return `<div class="mask"><div class="modal"><h3>删除这张思路图？</h3><p>删除后，这张思路图与其中的全部分支无法恢复。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-danger" onclick="App.doDeleteProject()">确认删除</button></div></div></div>`;
+ if(overlay.type==='limit'){
+  const m=modes[project().mode], isTotal=overlay.reason==='total';
+  const heading=overlay.reason==='root'?(project().mode==='decision'?'先收束起点方案':'先停在这三条念头'):overlay.reason==='child'?'先停在这三条路径':overlay.reason==='depth'?'这条路径已经很深了':'这张思路图已经很丰富了';
+  const key=overlay.reason==='root'?'limitRoot':overlay.reason==='child'?'limitChild':overlay.reason==='depth'?'limitDepth':'limitTotal';
+  return `<div class="mask"><div class="modal"><h3>${heading}</h3><p>${m[key]}</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">${isTotal&&project().mode==='decision'?'我再看看':'好的'}</button>${isTotal&&project().mode==='decision'?`<button class="btn btn-primary" onclick="App.branchAsNew('${overlay.parentId}')">以此分支新建思路图</button>`:''}${isTotal&&project().mode==='thought'?`<button class="btn btn-primary" onclick="App.convertDecision()">切换到决策推演</button>`:''}</div></div></div>`;
+ }
+ if(overlay.type==='export') return `<div class="mask"><div class="modal large"><h3>${overlay.title}</h3><textarea id="exportBox" class="export-area" readonly>${esc(overlay.text)}</textarea><p class="modal-note">完整复制后，可通过“导入文字版”重新创建为可编辑图，用于设备间迁移或自愿分享。<br>若复制失败，可以点击上方文本框手动全选复制。</p><div class="disclaimer">工具仅承载用户输入内容，不审核或对具体内容负责。请勿传播违法、有害或侵害他人权益的信息。</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">关闭</button><button class="btn btn-primary" onclick="App.copyExport()">复制文本</button></div></div></div>`;
+ if(overlay.type==='import') return `<div class="mask"><div class="modal large"><h3>导入文字版思路图</h3><p>粘贴由本工具导出的完整标准文字版，校验通过后将创建一张新的可编辑图。</p><textarea id="importBox" class="import-area" placeholder="在这里粘贴完整的思路图纯文字版……">${esc(overlay.draft||'')}</textarea><button class="help-link" onclick="App.openImportRules()">ⓘ 查看导入规则与常见错误</button><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.importText()">校验并导入</button></div></div></div>`;
+ if(overlay.type==='importRules') return `<div class="mask"><div class="modal large"><h3>导入规则与使用说明</h3><div class="rule-card"><h4>适合用来做什么</h4><p>文字版用于在设备之间迁移思路图，或在双方知情的情况下分享一张已整理好的图，让接收者继续编辑。</p></div><div class="rule-card"><h4>系统会检查什么</h4><ul><li>必须保留由本工具导出的标准数据段；普通文章或自行拼接内容不能直接导入。</li><li>标题最多 80 字；事实、描述、推测与行动方向最多 150 字；行动小步骤最多 100 字。</li><li>决策图中的成本、风险、回报每类最多 5 条，每一类的全部内容合计最多 150 字。</li><li>必填内容至少填写 2 个字符，不能只填写数字、符号或其他无法表达实际含义的占位内容。</li><li>最多 5 个层级；同一上级分支最多延伸 3 条；整张图最多 39 条分支。</li><li>念头整理图仍需满足行动补充规则，不能通过导入绕开。</li></ul></div><div class="rule-card"><h4>为什么设置拦截</h4><p>这是一个本地轻工具。限制结构与篇幅，是为了保持页面可读、避免导入后显示混乱，并为完整版的分析能力保留稳定的内容范围。本工具不审核用户输入内容，请勿传播违法、有害或侵害他人权益的信息。</p></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.backToImport()">返回导入</button></div></div></div>`;
+ if(overlay.type==='importError') return `<div class="mask"><div class="modal"><h3>${overlay.format?'无法识别文字版格式':'暂时无法导入这张思路图'}</h3>${overlay.format?`<p>请粘贴由本工具导出的完整标准文字版，并保留其中的数据段。自行改写或缺少数据段时，系统无法可靠还原结构。</p>`:`<p>发现一项主要的${overlay.category}问题：</p><div class="error-highlight">${esc(overlay.primary)}</div>${overlay.more?`<p class="modal-note">另外还有 ${overlay.more} 项不符合规则。建议先在原图中修改后重新导出，而不是手动绕过限制。</p>`:''}`}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.openImportRules()">查看规则</button><button class="btn btn-primary" onclick="App.backToImport()">返回修改</button></div></div></div>`;
+ if(overlay.type==='aiInfo') return `<div class="mask"><div class="modal"><h3>AI 分析师</h3><p>当前基础版本不支持 AI 分析功能。该功能仅在完整版中接入。</p><div class="modal-actions"><button class="btn btn-primary" onclick="App.close()">知道了</button></div></div></div>`;
+ if(overlay.type==='versions'){const p=project(),items=(p.versions||[]);return `<div class="mask"><div class="modal large"><h3>历史版本</h3><p>这里只保存你手动记录的版本。恢复后会覆盖当前内容，已有版本仍会保留。</p><div class="version-help">点击版本备注名称即可修改。复制后可通过“导入文字版”创建一张新图。</div>${items.length?`<div class="versions">${items.slice().reverse().map(v=>`<div class="version-row"><div><div class="version-name-row"><button class="version-note-btn" onclick="App.editVersionNote('${v.versionId}')">${esc(App.versionLabel(v))}</button></div><span>${nowText(v.savedAt)}</span></div><div class="version-actions"><button class="version-action" onclick="App.copyVersionText('${v.versionId}')">复制</button><button class="version-action" onclick="App.askRestoreVersion('${v.versionId}')">恢复</button><button class="version-action danger" onclick="App.askDeleteVersion('${v.versionId}')">删除</button></div></div>`).join('')}</div>`:`<div class="empty">还没有手动保存的版本。</div>`}<p class="modal-note">每张图最多保留最近 20 个手动版本。</p><div class="modal-actions versions-footer">${overlay.copyHelp?`<div class="version-copy-tip">若复制“${esc(overlay.copyHelp.label)}”失败，可以点击 <button onclick="App.openVersionText()">查看文本框</button> 手动复制。</div>`:'<span></span>'}<button class="btn btn-secondary" onclick="App.close()">关闭</button></div></div></div>`}
+ if(overlay.type==='childList'){const p=project(),found=nodeAt(p.nodes,overlay.nodeId),children=found?.node?.children||[];return `<div class="mask"><div class="modal"><h3>下级分支</h3><p>以下是这一分支的下级分支。选择一条即可前往查看。</p><div class="child-items">${children.map(child=>`<div class="child-item"><div class="child-item-title">${p.mode==='thought'?'“'+esc(child.title)+'”':esc(child.title)}${child.isStash?'　<span class="stash-label" style="margin:0">暂存</span>':''}</div><button class="child-go" onclick="App.goChild('${child.id}')">前往该下级分支 →</button></div>`).join('')}</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">返回</button></div></div></div>`}
+ if(overlay.type==='versionText') return `<div class="mask"><div class="modal large"><h3>复制历史版本文字版</h3><p>点击下方文本框，手动全选并复制。</p><textarea id="versionTextBox" class="export-area" readonly>${esc(overlay.text)}</textarea><div class="modal-actions"><button class="btn btn-secondary" onclick="App.backToVersions()">关闭</button></div></div></div>`;
+ if(overlay.type==='editVersionNote'){const v=(project().versions||[]).find(x=>x.versionId===overlay.versionId);return `<div class="mask"><div class="modal"><h3>修改版本备注</h3><div class="field"><label>版本备注<small>可选 · 最多 30 字</small></label><input id="version-note" class="input" maxlength="30" value="${esc(v?.note||'')}" placeholder="例如：先保留 AI 检查路径"></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.openVersions()">取消</button><button class="btn btn-primary" onclick="App.saveVersionNote('${overlay.versionId}')">保存备注</button></div></div></div>`}
+ if(overlay.type==='deleteVersion'){const v=(project().versions||[]).find(x=>x.versionId===overlay.versionId);return `<div class="mask"><div class="modal"><h3>删除这个历史版本？</h3><p>将删除“${esc(App.versionLabel(v))}”这一份备份。当前思路图和其他历史版本不会受到影响。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.openVersions()">取消</button><button class="btn btn-danger" onclick="App.doDeleteVersion('${overlay.versionId}')">确认删除</button></div></div></div>`}
+ if(overlay.type==='restoreVersion') return `<div class="mask"><div class="modal"><h3>恢复这个版本？</h3><p>当前未手动保存的编辑内容会被覆盖。恢复后，你仍可以继续编辑或再次保存新版本。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.openVersions()">取消</button><button class="btn btn-primary" onclick="App.doRestoreVersion('${overlay.versionId}')">确认恢复</button></div></div></div>`;
+ return '';
+}
+function renderOverlay(){
+ const root=document.getElementById('modal');
+ root.className=theme();
+ root.innerHTML=overlayHTML();
+}
+function touch(p,msg){p.updatedAt=Date.now();saveStore();render();if(msg)notify(msg)}
+function rootToText(p){
+ let text=`【思路图类型】${modes[p.mode].name}\n【${modes[p.mode].start}】${p.mode==='thought'?'“'+p.title+'”':p.title}\n`;
+ if(p.mode==='decision'){
+  text+=`【已知背景】${p.context||'未填写'}\n【目标或约束】${p.goal||'未填写'}\n`;
+ }else{
+  text+=`【实际观察到的事实】${p.context||'未填写'}\n【我加入的推测或担忧】${p.subjective||'未填写'}\n【我现在能做什么】${p.goal||'未填写'}\n`;
+  const steps=(p.steps||[]).filter(Boolean);if(steps.length)text+=`【行动步骤】\n${steps.map((x,i)=>`${i+1}. ${x}`).join('\n')}\n`;
+ }
+ return text;
+}
+function nodeToText(p,n,d,index,parent){
+ let text=`\n[${p.mode==='decision'?'D':'T'}${d}-${index}] ${p.mode==='thought'?'“'+n.title+'”':n.title}\n`;
+ if(parent)text+=`来自上级分支：${p.mode==='thought'?'“'+parent.title+'”':parent.title}\n`;
+ if(p.mode==='decision'){
+  const data=decisionData(n);
+  text+=`事实与条件：\n${(data.facts.length?data.facts:[data.note||'未填写']).map(x=>`- ${x}`).join('\n')}\n`;
+  [['成本',data.costs],['风险',data.risks],['回报',data.returns]].forEach(([label,items])=>{const clean=sortRated(items);text+=`${label}：\n${clean.length?clean.map(x=>`- [${x.certainty}] ${x.text}`).join('\n'):'- 未填写'}\n`});
+ }else if(isStash(n)){
+  text+=`状态：暂存 · 尚未整理\n暂存念头：${n.title}\n${n.stashNote?`此刻最卡住的是什么：${n.stashNote}\n`:''}`;
+ }else{
+  const data=thoughtData(n);
+  text+=`实际观察到的事实：${data.fact||data.note||'未填写'}\n我加入的推测或担忧：${data.subjective||'未填写'}\n我现在能做什么：${data.action||'未填写'}\n`;
+  const steps=data.steps.filter(Boolean);if(steps.length)text+=`行动步骤：\n${steps.map((x,i)=>`${i+1}. ${x}`).join('\n')}\n`;
+ }
+ return text;
+}
+function fullText(p){
+ let text=rootToText(p);
+ for(let d=1;d<=5;d++){const list=depthNodes(p.nodes,d);if(!list.length)continue;text+=`\n====================\n第${['一','二','三','四','五'][d-1]}层级\n`;list.forEach((it,i)=>{text+=nodeToText(p,it.node,d,i+1,it.parent)})}
+ return text+`\n---\n本内容由「思路图」整理。`;
+}
+function pathText(p,nodeId){
+ const path=collectPathNodes(p,nodeId);
+ let text=rootToText(p)+`\n====================\n【当前路径】\n`;
+ path.forEach((n,i)=>{text+=nodeToText(p,n,i+1,1,i?path[i-1]:null)});
+ return text+`\n---\n仅导出从起点到所选分支的一条路径。`;
+}
+
+
+function cleanExportGraph(p,nodesOverride=null){
+ const clone=JSON.parse(JSON.stringify(p));
+ clone.id='';
+ clone.isTemplate=false;
+ clone.versions=[];
+ clone.createdAt=0; clone.updatedAt=0;
+ if(nodesOverride)clone.nodes=nodesOverride;
+ return clone;
+}
+function pathNodesClone(p,nodeId){
+ const path=collectPathNodes(p,nodeId);
+ if(!path.length)return [];
+ let root=null,current=null;
+ path.forEach(n=>{
+  const copy=JSON.parse(JSON.stringify(n));
+  copy.children=[];
+  if(!root)root=copy;else current.children=[copy];
+  current=copy;
+ });
+ return root?[root]:[];
+}
+function withImportBlock(readable,data){
+ return `${readable}
+
+【分享与内容说明】
+此文字版用于保存、迁移或分享思路结构。工具仅承载用户输入内容，不审核或对具体内容负责；请勿传播违法、有害或侵害他人权益的信息。
+
+====================
+【可导入数据｜思路图纯文字版 v1】
+[SILUOTU_DATA_BEGIN]
+${JSON.stringify(data,null,2)}
+[SILUOTU_DATA_END]`;
+}
+function extractImportedData(text){
+ const match=String(text||'').match(/\[SILUOTU_DATA_BEGIN\]\s*([\s\S]*?)\s*\[SILUOTU_DATA_END\]/);
+ if(!match)throw new Error('未识别到标准格式。请粘贴由本工具导出的完整文字版内容。');
+ try{return JSON.parse(match[1])}catch(e){throw new Error('导入数据格式损坏，无法解析。')}
+}
+function validateImportedGraph(data){
+ const errors=[];
+ const text=(value,max,label,required=false)=>{const err=contentError(value,label,required,max);if(err)errors.push(err==='描述得稍微详细一点，会更有帮助。'?`${label}至少需要 2 个字符`:err==='请用文字描述这条内容，而不是只填写数字。'?`${label}不能只填写数字`:err==='请填写一段能够表达实际意思的内容。'?`${label}不能只填写符号`:err)};
+ const hasStep=(item)=>Array.isArray(item?.steps)&&item.steps.some(x=>String(x||'').trim());
+ if(!data || !['decision','thought'].includes(data.mode))errors.push('图类型无法识别');
+ text(data?.title,80,'起点标题',true);
+ text(data?.context,150,data?.mode==='thought'?'起点事实':'起点背景',data?.mode==='thought');
+ text(data?.goal,150,data?.mode==='thought'?'起点行动':'起点目标',data?.mode==='thought');
+ if(data?.mode==='thought'){
+  text(data.subjective,150,'起点推测或担忧',true);
+  if((data.steps||[]).length>5)errors.push('核心念头的行动步骤最多 5 条');
+  (data.steps||[]).forEach((x,i)=>text(x,100,`核心念头行动步骤 ${i+1}`,true));
+ }
+ let total=0, flat=[];
+ function walk(nodes,depth){
+  if(!Array.isArray(nodes)){errors.push('分支结构无法识别');return}
+  if(nodes.length && depth>5){errors.push('思路图最多展开到第 5 层级');return}
+  if(depth===1 && nodes.length>3)errors.push('起点下的第一层级最多保留 3 条分支');
+  if(depth>1 && nodes.length>3)errors.push(`第 ${depth} 层的同源分支最多保留 3 条`);
+  nodes.forEach(n=>{
+   total++; flat.push({node:n,depth});
+   text(n.title,80,`第 ${depth} 层分支标题`,true);
+   if(data.mode==='decision'){
+    if(n.isStash)errors.push('决策推演图不能包含暂存念头');
+    if(!Array.isArray(n.facts)||!n.facts.length)errors.push(`“${n.title||'未命名'}”缺少事实与条件`);
+    text((n.facts||[]).join('\n'),150,`“${n.title||'未命名'}”的事实与条件`,true);
+    [['costs','成本'],['risks','风险'],['returns','回报']].forEach(([kind,label])=>{
+     const arr=n[kind]||[]; if(arr.length>5)errors.push(`“${n.title||'未命名'}”的${label}最多填写 5 条`);
+     arr.forEach((x,i)=>{text(x.text,150,`${label}第 ${i+1} 条`,true);if(!certaintyOrder.includes(x.certainty))errors.push(`${label}中存在无法识别的确定性等级`)});
+     if(ratedTotal(arr)>150)errors.push(`“${n.title||'未命名'}”的${label}全部内容合计最多 150 字`);
+    });
+   }else if(isStash(n)){
+    text(n.stashNote,150,'暂存备注',false);
+    if(Array.isArray(n.children)&&n.children.length)errors.push('暂存念头不能继续延伸下级分支');
+   }else{
+    text(n.fact,150,`“${n.title||'未命名'}”的事实`,true);
+    text(n.subjective,150,`“${n.title||'未命名'}”的推测或担忧`,true);
+    text(n.action,150,`“${n.title||'未命名'}”的行动方向`,true);
+    if((n.steps||[]).length>5)errors.push(`“${n.title||'未命名'}”的行动步骤最多 5 条`);
+    (n.steps||[]).forEach((x,j)=>text(x,100,`“${n.title||'未命名'}”行动步骤 ${j+1}`,true));
+   }
+   if(Array.isArray(n.children) && n.children.length)walk(n.children,depth+1);
+  });
+ }
+ walk(data?.nodes||[],1);
+ if(total>39)errors.push('整张思路图最多保留 39 条分支');
+ if(data?.mode==='thought'){
+  const stashes=flat.filter(item=>isStash(item.node));
+  if(stashes.length>3)errors.push('整张念头图最多保留 3 条暂存念头');
+  const groups=new Map();
+  function scan(nodes,parentKey='root'){const count=(nodes||[]).filter(n=>isStash(n)).length;if(count>1)errors.push('同一上级分支下最多保留 1 条暂存念头');(nodes||[]).forEach(n=>scan(n.children||[],n.id||parentKey))}
+  scan(data.nodes||[]);
+  const activeFlat=flat.filter(item=>!isStash(item.node)), activeTotal=activeFlat.length, first=(data.nodes||[]).filter(n=>!isStash(n));
+  if(activeTotal>=4 && !hasStep(data))errors.push('念头分支达到 4 条后，请先为核心念头补充至少 1 个行动步骤');
+  if(activeTotal>=10 && first.some(n=>!hasStep(n)))errors.push('念头分支达到 10 条后，第一层级的每条念头都需要至少 1 个行动步骤');
+  if(activeTotal>=19){activeFlat.filter(item=>Array.isArray(item.node.children)&&item.node.children.some(c=>!isStash(c))).forEach(item=>{if(!hasStep(item.node))errors.push('念头分支较多时，继续延伸的路径需要先补充行动步骤')})}
+  if(activeTotal>=31 && activeFlat.some(item=>!hasStep(item.node)))errors.push('念头分支达到 31 条后，每条念头都需要至少 1 个行动步骤');
+ }
+ return [...new Set(errors)];
+}
+function importErrorCategory(errors){
+ const structure=errors.find(e=>/层级|分支最多|总分支|结构/.test(e));
+ const action=errors.find(e=>/行动步骤|行动方向/.test(e));
+ const content=errors.find(e=>/超过|不能为空|缺少|无法识别/.test(e));
+ if(structure)return {kind:'结构限制',primary:structure};
+ if(action)return {kind:'念头行动规则',primary:action};
+ return {kind:'内容限制',primary:content||errors[0]};
+}
+function reIdNodes(nodes){
+ return (nodes||[]).map(n=>({...n,id:id('n'),children:reIdNodes(n.children||[])}));
+}
+function importedProject(data){
+ return {
+  id:id('p'),mode:data.mode,title:data.title,context:data.context||'',goal:data.goal||'',
+  subjective:data.subjective||'',steps:data.steps||[],nodes:reIdNodes(data.nodes||[]),
+  createdAt:Date.now(),updatedAt:Date.now(),versions:[]
+ };
+}
+function versionSnapshot(p){
+ const snapshot=JSON.parse(JSON.stringify(p));
+ delete snapshot.versions;
+ return snapshot;
+}
+
+
+function attemptCopyText(text, successMessage){
+ try{
+  if(navigator.clipboard && window.isSecureContext){
+   navigator.clipboard.writeText(text).then(()=>notify(successMessage)).catch(()=>{});
+   return;
+  }
+  const box=document.createElement('textarea');
+  box.value=text;
+  box.setAttribute('readonly','');
+  box.style.position='fixed';
+  box.style.left='-9999px';
+  box.style.top='0';
+  document.body.appendChild(box);
+  box.focus();
+  box.select();
+  box.setSelectionRange(0,box.value.length);
+  const ok=document.execCommand('copy');
+  box.remove();
+  if(ok)notify(successMessage);
+ }catch(error){}
+}
+
+window.App={
+ home(){overlay=null;pendingDelete=null;page='home';currentId=null;render();window.scrollTo(0,0)},
+ selectMode(m){homeMode=m;render();},
+ backToModeChoice(){
+  const grid=document.querySelector('.mode-grid');
+  if(!grid)return;
+  const rect=grid.getBoundingClientRect();
+  const center=window.scrollY+rect.top+rect.height/2;
+  const top=Math.max(0,center-window.innerHeight/2);
+  window.scrollTo({top,behavior:'smooth'});
+ },
+ openCreate(m){overlay=null;creationMode=m;page='create';render();window.scrollTo(0,0)},
+ showExample(m){overlay={type:'example',mode:m};renderOverlay()},
+ close(){overlay=null;pendingDelete=null;render()},
+ create(){
+  const title=document.getElementById('create-title').value.trim(),context=document.getElementById('create-context').value.trim(),goal=document.getElementById('create-goal').value.trim();
+  let err=contentError(title,'起点标题',true,80)||contentError(context,creationMode==='thought'?'发生了什么':'已知背景',false,150)||contentError(goal,creationMode==='thought'?'改善方向':'目标或约束',false,150);
+  if(err){notify(err);return}
+  const p={id:id('p'),mode:creationMode,title,context,goal,subjective:'',steps:[],nodes:[],createdAt:Date.now(),updatedAt:Date.now(),versions:[]};
+  projects.unshift(p);saveStore();currentId=p.id;level=1;page='editor';render();window.scrollTo(0,0);notify('已创建思路图');
+ },
+ openProject(i){currentId=i;page='editor';level=1;expandedCards=new Set();locatorHidden=false;locatorGroupCursor=null;locatorPhase='absent';locatorViewKey='';locatorWasEligible=false;clearLocatorAnimation();render();window.scrollTo(0,0);setTimeout(()=>App.centerActiveLevel(),30)},
+ deleteProject(i){const item=projects.find(p=>p.id===i);if(item?.isTemplate){notify('示例模板不能删除，可进入体验或基于模板创建');return}overlay={type:'deleteProject',id:i};renderOverlay()},
+ doDeleteProject(){const item=projects.find(p=>p.id===overlay.id);if(item?.isTemplate){overlay=null;render();notify('示例模板不能删除');return}projects=projects.filter(p=>p.id!==overlay.id);saveStore();overlay=null;render();notify('已删除思路图')},
+ askResetTemplate(){overlay={type:'resetTemplate'};renderOverlay()},
+ doResetTemplate(){const refreshed=resetTemplateById(currentId);overlay=null;if(refreshed){level=1;render();notify('模板已恢复')}else{render();notify('未找到模板')}},
+ editRoot(){overlay={type:'root'};renderOverlay()},
+ saveRoot(){
+  const p=project(),t=document.getElementById('root-title').value.trim(),context=document.getElementById('root-context').value.trim(),goal=document.getElementById('root-goal').value.trim();
+  if(!t){notify('起点标题不能为空');return}
+  const subjective=p.mode==='thought'?document.getElementById('root-subjective').value.trim():'';
+  const steps=p.mode==='thought'?[...document.querySelectorAll('[data-step]')].map(x=>x.value.trim()).filter(Boolean).slice(0,5):[];
+  const rootLengthError=checkRootContent(p,t,context,goal,subjective,steps);
+  if(rootLengthError){notify(rootLengthError);return}
+  if(p.mode==='thought'){
+   if(!context||!subjective||!goal){notify('请补充事实、推测与行动方向');return}
+   p.subjective=subjective;
+   p.steps=steps;
+  }
+  p.title=t;p.context=context;p.goal=goal;overlay=null;touch(p,'已更新起点')
+ },
+ setLevel(n){locatorGroupCursor=null;level=n;render();setTimeout(()=>App.centerActiveLevel(),30)},
+ tryLevel(n){
+  const p=project();
+  if(n>1 && lineCount(p,n)===0){notify(`第${['一','二','三','四','五'][n-1]}层级还没有添加分支`);return}
+  locatorGroupCursor=null;level=n;render();setTimeout(()=>App.centerActiveLevel(),30);
+ },
+ tryNextLevel(n){
+  if(lineCount(project(),n)===0){notify('下一层级还没添加分支');return}
+  this.switchLevel(n,true);
+ },
+ centerActiveLevel(){
+  const nav=document.querySelector('.levelbar'),active=nav?.querySelector('.level-tab.active');
+  if(nav&&active){const left=active.offsetLeft-(nav.clientWidth-active.clientWidth)/2;nav.scrollTo({left:Math.max(0,left),behavior:'smooth'})}
+ },
+ switchLevel(n,keepViewport=false){
+  const nav=keepViewport?document.querySelector('.level-bottom-nav'):null;
+  const before=nav?.getBoundingClientRect().top;
+  locatorGroupCursor=null;
+  level=n; render();
+  requestAnimationFrame(()=>{
+   if(keepViewport && before!==undefined){
+    const after=document.querySelector('.level-bottom-nav')?.getBoundingClientRect().top;
+    if(after!==undefined)window.scrollBy({top:after-before,behavior:'auto'});
+   }
+   App.centerActiveLevel();
+  });
+ },
+ collapseLocator(){
+  clearLocatorAnimation(); locatorPhase='ready'; locatorHidden=true;
+  document.querySelector('.locator-nav')?.classList.add('is-collapsed');
+ },
+ expandLocator(){
+  clearLocatorAnimation(); locatorPhase='ready'; locatorHidden=false;
+  const nav=document.querySelector('.locator-nav');
+  nav?.classList.remove('is-arriving','is-leaving','is-exiting-expanded','is-exiting-toggle','is-settling','is-toggle-fading-out','is-collapsed');
+ },
+ jumpLayerEdge(edge){
+  const groups=[...document.querySelectorAll('.card-list .branch[data-group-start="1"]')];
+  locatorGroupCursor=edge==='top'?-1:groups.length;
+  if(edge==='top'){
+   const target=document.querySelector('.levelbar');
+   if(!target)return;
+   const headerHeight=document.querySelector('.brandbar')?.getBoundingClientRect().height || 66;
+   const safeGap=16;
+   const top=window.scrollY+target.getBoundingClientRect().top-headerHeight-safeGap;
+   window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+   return;
+  }
+  document.querySelector('.level-bottom-nav')?.scrollIntoView({behavior:'smooth',block:'center'});
+ },
+ currentGroupIndex(groups){
+  const marker=window.innerHeight*.42;
+  let nearest=0, distance=Infinity;
+  groups.forEach((card,i)=>{
+   const d=Math.abs(card.getBoundingClientRect().top-marker);
+   if(d<distance){distance=d;nearest=i}
+  });
+  return nearest;
+ },
+ jumpGroup(direction){
+  const groups=[...document.querySelectorAll('.card-list .branch[data-group-start="1"]')];
+  if(!groups.length){return}
+  if(groups.length===1){this.jumpLayerEdge(direction>0?'bottom':'top');return}
+  let cursor=locatorGroupCursor;
+  if(cursor===null)cursor=this.currentGroupIndex(groups);
+  if(direction>0){
+   const next=cursor<0?0:cursor+1;
+   if(next>=groups.length){this.jumpLayerEdge('bottom');return}
+   locatorGroupCursor=next;
+   groups[next].scrollIntoView({behavior:'auto',block:'center'});
+  }else{
+   const prev=cursor>=groups.length?groups.length-1:cursor-1;
+   if(prev<0){this.jumpLayerEdge('top');return}
+   locatorGroupCursor=prev;
+   groups[prev].scrollIntoView({behavior:'auto',block:'center'});
+  }
+ },
+ toggleDetails(nodeId){
+  if(expandedCards.has(nodeId))expandedCards.delete(nodeId);else expandedCards.add(nodeId);
+  render();setTimeout(()=>App.centerActiveLevel(),20);
+ },
+ toggleAllDetails(currentLevel,allExpanded){
+  const nodes=depthNodes(project().nodes,currentLevel);
+  nodes.forEach(item=>{if(allExpanded)expandedCards.delete(item.node.id);else expandedCards.add(item.node.id)});
+  render();setTimeout(()=>App.centerActiveLevel(),20);
+ },
+ goParent(nodeId,d){
+  level=d; spotlightId=nodeId; render();
+  setTimeout(()=>{App.centerActiveLevel();document.querySelector(`[data-id="${nodeId}"]`)?.scrollIntoView({behavior:'smooth',block:'center'})},35);
+  setTimeout(()=>{if(spotlightId===nodeId){spotlightId=null;render()}},1250);
+ },
+ addBranch(parentId){
+  const p=project(),total=countNodes(p),nextTotal=total+1;
+  if(total>=39){overlay={type:'limit',reason:'total',parentId};renderOverlay();return}
+  if(!parentId && p.nodes.length>=3){overlay={type:'limit',reason:'root',parentId:null};renderOverlay();return}
+  if(parentId){const f=nodeAt(p.nodes,parentId);if(isStash(f.node)){notify('暂存念头需要先继续整理，才能向下延伸');return}if(f.node.children.length>=3){overlay={type:'limit',reason:'child',parentId};renderOverlay();return}if(f.depth>=5){overlay={type:'limit',reason:'depth',parentId};renderOverlay();return}}
+  if(p.mode==='thought'){
+   if(nextTotal>=4 && !actionStepsFilled(p)){
+    overlay={type:'actionGate',gate:'root',pendingParentId:parentId,heading:'先为核心念头补充一步行动',text:'你已经写下了几条延伸念头。继续增加之前，先把核心念头对应的行动拆出至少一个小步骤，让整理能够落到改变上。',items:['核心念头：至少补充 1 个行动步骤']};renderOverlay();return;
+   }
+   if(nextTotal>=10){
+    const missing=p.nodes.filter(n=>!actionStepsFilled(n));
+    if(missing.length){overlay={type:'actionGate',gate:'first',targetId:missing[0].id,pendingParentId:parentId,heading:'先把第一层级的行动补完整',text:'思路已经展开到较多分支。继续之前，请先让最初的几条念头都拥有一个可以开始执行的小步骤。',items:missing.map(n=>'“'+n.title+'”').slice(0,3)};renderOverlay();return}
+   }
+   if(nextTotal>=19 && parentId){
+    const missing=collectPathNodes(p,parentId).filter(n=>!actionStepsFilled(n));
+    if(missing.length){overlay={type:'actionGate',gate:'path',targetId:missing[0].id,pendingParentId:parentId,heading:'先补充这条路径上的行动',text:'你正在继续深入这条念头路径。先把路径上还没有落地的行动补起来，再决定是否继续延伸。',items:missing.map(n=>'“'+n.title+'”').slice(0,4)};renderOverlay();return}
+   }
+  }
+  overlay={type:'branch',parentId,data:{}};renderOverlay();
+ },
+ addSibling(nodeId){const f=nodeAt(project().nodes,nodeId);this.addBranch(f.parent ? f.parent.id : null)},
+ editBranch(nodeId){const n=nodeAt(project().nodes,nodeId).node;overlay={type:'branch',editId:nodeId,data:JSON.parse(JSON.stringify(n))};renderOverlay()},
+ saveBranch(){
+  const p=project(),title=document.getElementById('branch-title').value.trim();
+  const titleError=contentError(title,p.mode==='decision'?'选择标题':'当前念头',true,80);if(titleError){notify(titleError);return}
+  let data={title,children:[]};
+  if(p.mode==='decision'){
+   const factText=(document.getElementById('decision-facts').value||'').trim();
+   const factErr=contentError(factText,'事实与条件',true,150);if(factErr){notify(factErr);return}
+   data.facts=[factText];
+   ['costs','risks','returns'].forEach(kind=>{data[kind]=sortRated([...document.querySelectorAll(`[data-kind="${kind}"][data-field="text"]`)].map((row,i)=>({text:row.value.trim(),certainty:document.querySelector(`[data-kind="${kind}"][data-index="${i}"][data-field="certainty"]`).value})))});
+   for(const [kind,label] of [['costs','成本'],['risks','风险'],['returns','回报']]){
+    for(const item of data[kind]){const err=contentError(item.text,label,true,150);if(err){notify(err);return}}
+    if(ratedTotal(data[kind])>150){notify(`${label}全部内容合计最多 150 字`);return}
+   }
+  }else{
+   data.fact=document.getElementById('thought-fact').value.trim();
+   data.subjective=document.getElementById('thought-subjective').value.trim();
+   data.action=document.getElementById('thought-action').value.trim();
+   data.steps=[...document.querySelectorAll('[data-step]')].map(x=>x.value.trim()).filter(Boolean).slice(0,5);
+   if(!data.fact||!data.subjective||!data.action){notify('请补充事实、推测与行动方向');return}
+   for(const [value,label] of [[data.fact,'事实'],[data.subjective,'推测或担忧'],[data.action,'行动方向']]){const err=contentError(value,label,true,150);if(err){notify(err);return}}
+   for(const step of data.steps){const err=contentError(step,'行动步骤',true,100);if(err){notify(err);return}}
+   if(countNodes(p)>=30 && !overlay.editId && !data.steps.length){notify('请至少拆出一个具体行动步骤');return}
+  }
+  if(overlay.editId){const n=nodeAt(p.nodes,overlay.editId).node,children=n.children||[];Object.assign(n,data,{children});if(overlay.fromStash){delete n.isStash;delete n.stashNote}}
+  else{data.id=id('n');if(overlay.parentId)nodeAt(p.nodes,overlay.parentId).node.children.push(data);else p.nodes.push(data)}
+  overlay=null;touch(p,p.mode==='decision'?'已保存选择':'已保存念头');
+ },
+ continueStash(nodeId){const n=nodeAt(project().nodes,nodeId).node;overlay={type:'branch',editId:nodeId,fromStash:true,stashNote:n.stashNote||'',data:{title:n.title,fact:'',subjective:'',action:'',steps:[]}};renderOverlay()},
+ openSupportChoices(){overlay={...overlay,type:'supportChoices',showMore:false};renderOverlay()},
+ toggleSupportMore(){overlay.showMore=!overlay.showMore;renderOverlay()},
+ openSupportGuide(kind){overlay={...overlay,type:'supportGuide',kind};renderOverlay()},
+ openStashForm(){overlay={...overlay,type:'stashForm',draftTitle:'',draftNote:''};renderOverlay()},
+ saveStash(){
+  const p=project(),title=document.getElementById('stash-title').value.trim(),note=document.getElementById('stash-note').value.trim();
+  let err=contentError(title,'暂存念头',true,150)||contentError(note,'暂存备注',false,150);if(err){notify(err);return}
+  if(countStashes(p)>=3){notify('整张念头图最多保留三条暂存念头');return}
+  const container=branchContainer(p,overlay.pendingParentId||null);
+  if(container.some(n=>isStash(n))){notify('这条路径下已经有一条暂存念头');return}
+  if(container.length>=3){notify('这个位置已经有三条分支了');return}
+  const node={id:id('n'),title,stashNote:note,isStash:true,children:[]};
+  container.push(node);overlay=null;touch(p,'已暂存这条念头');
+ },
+ addRated(kind){
+  captureBranchDraft();const arr=overlay.data[kind]||[];
+  if(arr.length>=5){notify('每一类最多添加 5 条');return}
+  arr.push({certainty:'中等可能',text:''});overlay.data[kind]=arr;renderOverlay();
+ },
+ removeRated(kind,index){captureBranchDraft();const arr=overlay.data[kind]||[];arr.splice(index,1);overlay.data[kind]=arr;renderOverlay()},
+ addStep(){captureBranchDraft();const arr=overlay.data.steps||[];if(arr.length>=5){notify('行动最多拆成 5 步');return}arr.push('');overlay.data.steps=arr;renderOverlay()},
+ removeStep(index){captureBranchDraft();const arr=overlay.data.steps||[];arr.splice(index,1);overlay.data.steps=arr;renderOverlay()},
+ addRootStep(){
+  const values=[...document.querySelectorAll('[data-step]')].map(x=>x.value);
+  if(values.length>=5){notify('行动最多拆成 5 步');return}
+  overlay.draft={
+   title:document.getElementById('root-title').value,
+   context:document.getElementById('root-context').value,
+   subjective:document.getElementById('root-subjective').value,
+   goal:document.getElementById('root-goal').value,
+   steps:values.concat('')
+  };
+  renderOverlay();
+ },
+ removeRootStep(index){
+  const values=[...document.querySelectorAll('[data-step]')].map(x=>x.value);
+  values.splice(index,1);
+  overlay.draft={
+   title:document.getElementById('root-title').value,
+   context:document.getElementById('root-context').value,
+   subjective:document.getElementById('root-subjective').value,
+   goal:document.getElementById('root-goal').value,
+   steps:values
+  };
+  renderOverlay();
+ },
+ openGateTarget(){
+  const target=overlay.gate==='root'?null:overlay.targetId;
+  overlay=target?{type:'branch',editId:target,data:JSON.parse(JSON.stringify(nodeAt(project().nodes,target).node))}:{type:'root'};
+  renderOverlay();
+ },
+ move(nodeId,dir){const p=project(),f=nodeAt(p.nodes,nodeId),target=f.index+dir;if(target<0||target>=f.arr.length)return;[f.arr[f.index],f.arr[target]]=[f.arr[target],f.arr[f.index]];touch(p,'顺序已调整')},
+ showChildren(nodeId){overlay={type:'childList',nodeId};renderOverlay()},
+ goChild(nodeId){const f=nodeAt(project().nodes,nodeId);if(!f){notify('未找到该下级分支');return}overlay=null;level=f.depth;spotlightId=nodeId;render();setTimeout(()=>{App.centerActiveLevel();document.querySelector(`[data-id="${nodeId}"]`)?.scrollIntoView({behavior:'smooth',block:'center'})},35);setTimeout(()=>{if(spotlightId===nodeId){spotlightId=null;render()}},1250)},
+ requestDelete(nodeId){const p=project(),n=nodeAt(p.nodes,nodeId).node,ids=descendantIds(n,[]).slice(1),items=ids.map(i=>nodeAt(p.nodes,i).node.title);overlay={type:'delete',nodeId,items};renderOverlay()},
+ cancelDelete(){overlay=null;pendingDelete=null;render()},
+ confirmDelete(){const p=project(),f=nodeAt(p.nodes,overlay.nodeId);f.arr.splice(f.index,1);overlay=null;pendingDelete=null;if(!lineCount(p,level)&&level>1)level--;touch(p,'已删除分支')},
+ clearGraph(){overlay={type:'confirmClear'};renderOverlay()},
+ doClear(){const p=project();p.nodes=[];level=1;overlay=null;touch(p,'已清空分支')},
+ aiInfo(){overlay={type:'aiInfo'};renderOverlay()},
+ openImport(){overlay={type:'import',draft:''};renderOverlay()},
+ openImportRules(){
+  const typed=document.getElementById('importBox')?.value;
+  const draft=typed!==undefined ? typed : (overlay?.draft||'');
+  overlay={type:'importRules',draft};renderOverlay();
+ },
+ backToImport(){const draft=overlay?.draft||'';overlay={type:'import',draft};renderOverlay()},
+ importText(){
+  const raw=document.getElementById('importBox').value;
+  try{
+   const data=extractImportedData(raw),errors=validateImportedGraph(data);
+   if(errors.length){const info=importErrorCategory(errors);overlay={type:'importError',draft:raw,category:info.kind,primary:info.primary,more:errors.length-1};renderOverlay();return}
+   const p=importedProject(data);
+   projects.unshift(p);saveStore();homeMode=p.mode;currentId=p.id;page='editor';level=1;expandedCards=new Set();overlay=null;render();window.scrollTo(0,0);notify('已导入为可编辑思路图');
+  }catch(e){overlay={type:'importError',format:true,draft:raw};renderOverlay()}
+ },
+ saveVersion(){
+  const p=project();p.versions=Array.isArray(p.versions)?p.versions:[];
+  const removed=p.versions.length>=20;
+  p.versions.push({versionId:id('v'),savedAt:Date.now(),note:'',data:versionSnapshot(p)});
+  if(p.versions.length>20)p.versions=p.versions.slice(-20);
+  saveStore();render();notify(removed?'已保存新版本，并移除最早的一份备份':'已手动保存当前版本');
+ },
+ versionLabel(v){return String(v?.note||'').trim()||'手动保存版本'},
+ copyVersionLabel(v){return String(v?.note||'').trim()||nowText(v.savedAt)},
+ openVersions(){overlay={type:'versions'};renderOverlay()},
+ openVersionText(){if(!overlay.copyHelp)return;overlay={type:'versionText',text:overlay.copyHelp.text,label:overlay.copyHelp.label};renderOverlay()},
+ backToVersions(){const keep={text:overlay.text,label:overlay.label};overlay={type:'versions',copyHelp:keep};renderOverlay()},
+ editVersionNote(versionId){overlay={type:'editVersionNote',versionId};renderOverlay()},
+ saveVersionNote(versionId){const p=project(),v=(p.versions||[]).find(x=>x.versionId===versionId);if(!v){notify('未找到该历史版本');return}v.note=document.getElementById('version-note').value.trim().slice(0,30);saveStore();overlay={type:'versions'};renderOverlay();notify('已更新版本备注')},
+ copyVersionText(versionId){const v=(project().versions||[]).find(x=>x.versionId===versionId);if(!v){notify('未找到该历史版本');return}const text=withImportBlock(fullText(v.data),cleanExportGraph(v.data));const label=this.copyVersionLabel(v);overlay={type:'versions',copyHelp:{text,label}};renderOverlay();attemptCopyText(text,`已复制“${label}”的文字版思路图`)},
+ askDeleteVersion(versionId){overlay={type:'deleteVersion',versionId};renderOverlay()},
+ doDeleteVersion(versionId){const p=project();p.versions=(p.versions||[]).filter(v=>v.versionId!==versionId);saveStore();overlay={type:'versions'};renderOverlay();notify('已删除这一份历史版本')},
+ askRestoreVersion(versionId){overlay={type:'restoreVersion',versionId};renderOverlay()},
+ doRestoreVersion(versionId){
+  const p=project(),v=(p.versions||[]).find(item=>item.versionId===versionId);
+  if(!v){notify('未找到该历史版本');return}
+  const keepVersions=p.versions,keepId=p.id,keepTemplate=p.isTemplate;
+  Object.assign(p,JSON.parse(JSON.stringify(v.data)),{id:keepId,versions:keepVersions,isTemplate:keepTemplate||false,updatedAt:Date.now()});
+  saveStore();overlay=null;level=1;expandedCards=new Set();render();notify('已恢复历史版本');
+ },
+ cloneProject(projectId){const source=projects.find(item=>item.id===projectId);if(!source){notify('未找到要复制的思路图');return}const copy=JSON.parse(JSON.stringify(source));copy.id=id('p');copy.isTemplate=false;copy.versions=[];copy.title=('拷贝·'+source.title).slice(0,80);copy.nodes=reIdNodes(copy.nodes||[]);copy.createdAt=Date.now();copy.updatedAt=Date.now();projects.unshift(copy);saveStore();homeMode=copy.mode;render();notify('已创建思路图副本')},
+ exportFull(){const p=project();overlay={type:'export',title:'导出整张思路图',text:withImportBlock(fullText(p),cleanExportGraph(p))};renderOverlay()},
+ exportPath(nodeId){const p=project(),nodes=pathNodesClone(p,nodeId);overlay={type:'export',title:'导出当前路径',text:withImportBlock(pathText(p,nodeId),cleanExportGraph(p,nodes))};renderOverlay()},
+ copyExport(){const b=document.getElementById('exportBox');attemptCopyText(b.value,'文本已复制')},
+ branchAsNew(nodeId){
+  const old=project(),f=nodeId?nodeAt(old.nodes,nodeId):null,n=f?.node||null;
+  const p={id:id('p'),mode:'decision',title:n?.title||old.title,context:n?((n.facts||[]).join('；')||n.note||''):(old.context||''),goal:'从原思路图的某条分支继续分析。',nodes:n?JSON.parse(JSON.stringify(n.children||[])):[],createdAt:Date.now(),updatedAt:Date.now()};
+  projects.unshift(p);saveStore();currentId=p.id;page='editor';level=1;overlay=null;render();notify('已基于该分支新建思路图');
+ },
+ convertDecision(){const old=project();const p={id:id('p'),mode:'decision',title:'我现在可以具体做什么？',context:'从念头整理转入执行：'+old.title,goal:'把念头转化为可以推进的行动。',nodes:[],createdAt:Date.now(),updatedAt:Date.now()};projects.unshift(p);saveStore();currentId=p.id;page='editor';level=1;overlay=null;render();notify('已进入决策推演')}
+};
+render();
+})();
+</script>
+</body>
+</html>
