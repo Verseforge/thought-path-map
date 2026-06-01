@@ -130,9 +130,13 @@ button:disabled{cursor:not-allowed}
 
 .history-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
 .history-title-actions{display:flex;align-items:center;gap:14px;min-width:0}
+.history-utility-actions{display:flex;align-items:center;gap:8px;flex:none}
 .history-head h2{font-size:25px;font-weight:570;margin:0;white-space:nowrap}
 .history-head .storage-note{font-size:13px;color:var(--muted);white-space:nowrap}
 .import-btn{flex:none;transform:translateY(.5px)}
+.mini.batch-delete-btn{flex:none;border-color:#ead2cc;color:var(--danger);background:color-mix(in srgb,var(--danger-bg) 42%,var(--paper))}
+.mini.batch-delete-btn:hover:not(:disabled){background:var(--danger-bg);border-color:#ddb8b2}
+.batch-danger-note{margin-top:14px;padding:11px 12px;border-radius:11px;background:var(--danger-bg);color:var(--danger);font-size:13px;line-height:1.7}
 .tabline{display:flex;gap:7px;margin-bottom:18px}
 .tab{border:1px solid var(--line);background:transparent;border-radius:999px;height:37px;padding:0 16px;color:var(--muted)}
 .tab.active{border-color:var(--sage);background:var(--sage-soft);color:var(--ink)}
@@ -143,9 +147,18 @@ button:disabled{cursor:not-allowed}
 .record{border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 94%, var(--bg));border-radius:15px;padding:15px 17px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .record-title{font-weight:550;font-size:15px;margin-bottom:6px}
 .record-meta{font-size:12px;color:var(--muted)}
-.record-actions{display:flex;gap:7px}
+.record-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
 .mini{height:34px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:color-mix(in srgb,var(--paper) 92%, var(--bg));color:var(--ink);font-size:13px}
 .mini.warn{color:var(--danger)}
+.sortable-record{position:relative;transition:border-color .16s ease,box-shadow .16s ease,background .16s ease}
+.sortable-record.is-dragging{border-color:color-mix(in srgb,var(--sage) 56%,var(--line));background:color-mix(in srgb,var(--paper) 96%,var(--sage-soft));box-shadow:0 14px 34px rgba(37,34,28,.12);z-index:28}
+.drag-handle{height:34px;width:34px;border:1px solid var(--line);border-radius:9px;background:color-mix(in srgb,var(--paper) 92%,var(--bg));color:var(--muted);display:flex;align-items:center;justify-content:center;padding:0;touch-action:none;cursor:grab;flex:none}
+.drag-handle:hover{border-color:var(--sage);background:var(--sage-soft);color:var(--ink)}
+.drag-handle:active{cursor:grabbing}
+.grip-dots{display:grid;grid-template-columns:repeat(2,3px);grid-auto-rows:3px;gap:3px;pointer-events:none}
+.grip-dots i{display:block;width:3px;height:3px;border-radius:50%;background:currentColor}
+body.is-project-dragging{user-select:none;cursor:grabbing}
+body.is-project-dragging .drag-handle{cursor:grabbing}
 .create-wrap{max-width:710px;margin:60px auto}
 .back{border:0;background:none;color:var(--muted);padding:0;margin-bottom:36px;font-size:14px}
 .create-panel{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:clamp(27px,5vw,42px);box-shadow:var(--shadow)}
@@ -377,6 +390,9 @@ button:disabled{cursor:not-allowed}
  .library-tab{height:42px;padding:0 17px;font-size:14px}
  .library-panel{padding:19px 15px;border-radius:17px}
  .library-panel .history-head{align-items:flex-start}
+ .history-title-actions{flex-wrap:wrap;gap:9px}
+ .history-title-actions h2{flex-basis:100%}
+ .history-utility-actions{gap:7px}
  .history-jump-hint{position:fixed;left:50%;bottom:72px;z-index:26;width:46px;height:46px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--paper) 90%,var(--bg));color:var(--muted);box-shadow:0 12px 30px rgba(36,33,29,.12);display:flex;align-items:center;justify-content:center;font-size:22px;opacity:0;transform:translate(-50%,12px);transition:opacity .3s ease,transform .3s ease}
  .history-jump-hint.is-show{opacity:1;transform:translate(-50%,0)}
  .history-jump-hint.is-hide{opacity:0;transform:translate(-50%,8px)}
@@ -401,6 +417,7 @@ button:disabled{cursor:not-allowed}
  .history-head .storage-note{font-size:12px}
  .import-btn{align-self:flex-start;transform:none}
  .record{align-items:flex-start;flex-direction:column}
+ .record-actions{justify-content:flex-start;width:100%}
  .root-top{flex-direction:column}
  .branch-head{flex-direction:column}
  .actions{justify-content:flex-start}
@@ -432,6 +449,7 @@ button:disabled{cursor:not-allowed}
 <script>
 (()=> {
 const STORAGE='siluotu_round1_v1';
+const STORAGE_ORDER_MIGRATION=STORAGE+'_project_array_order_v1';
 const COLORS=['var(--g1)','var(--g2)','var(--g3)','var(--g4)','var(--g5)','var(--g6)','var(--g7)','var(--g8)','var(--g9)'];
 const modes={
  decision:{
@@ -694,8 +712,28 @@ function resetTemplateById(templateId){
  return null;
 }
 
-let projects=ensureTemplates(readStore()), page='home', homeMode=null, creationMode='decision', libraryMode='decision', currentId=null, level=1;
-let overlay=null, pendingDelete=null, typingTimer=null, spotlightId=null, previewTimers=[], brandMenuOpen=false, historyHintTimer=null, historyHintObserver=null, previewTapAt=0;
+function normalizeStoredProjectOrder(list){
+ let changed=false;
+ list.forEach(item=>{
+  if(Object.prototype.hasOwnProperty.call(item,'listOrder')){
+   delete item.listOrder;
+   changed=true;
+  }
+ });
+ localStorage.removeItem(STORAGE+'_stable_order_v2');
+ localStorage.removeItem(STORAGE+'_drag_order_v1');
+ if(localStorage.getItem(STORAGE_ORDER_MIGRATION)!=='done'){
+  const users=list.filter(item=>!item.isTemplate).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+  const templates=list.filter(item=>item.isTemplate);
+  list=[...users,...templates];
+  localStorage.setItem(STORAGE_ORDER_MIGRATION,'done');
+  changed=true;
+ }
+ if(changed)localStorage.setItem(STORAGE,JSON.stringify(list));
+ return list;
+}
+let projects=normalizeStoredProjectOrder(ensureTemplates(readStore())), page='home', homeMode=null, creationMode='decision', libraryMode='decision', currentId=null, level=1;
+let overlay=null, pendingDelete=null, typingTimer=null, spotlightId=null, previewTimers=[], brandMenuOpen=false, historyHintTimer=null, historyHintObserver=null, previewTapAt=0, projectDrag=null;
 let expandedCards=new Set();
 let locatorHidden=false;
 let locatorGroupCursor=null;
@@ -710,16 +748,37 @@ function id(prefix='x'){return prefix+'_'+Date.now()+'_'+Math.floor(Math.random(
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function readStore(){try{return JSON.parse(localStorage.getItem(STORAGE)||'[]')}catch(e){return []}}
 function saveStore(){localStorage.setItem(STORAGE,JSON.stringify(projects))}
+function addUserProjectAtTop(item){
+ projects=projects.filter(existing=>existing.id!==item.id);
+ projects.unshift(item);
+}
+function reorderModeUsersFromDOM(mode,ids){
+ const byId=new Map(projects.filter(item=>item.mode===mode&&!item.isTemplate).map(item=>[item.id,item]));
+ const reordered=ids.map(id=>byId.get(id)).filter(Boolean);
+ if(reordered.length!==byId.size)return;
+ let cursor=0;
+ projects=projects.map(item=>{
+  if(item.mode===mode&&!item.isTemplate)return reordered[cursor++];
+  return item;
+ });
+}
 function nowText(ts){const d=new Date(ts),z=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}月${d.getDate()}日 ${z(d.getHours())}:${z(d.getMinutes())}`}
 function templateMeta(p){return p.templateMeta||'三层结构 · 可进入体验 · 不可删除'}
 function sortProjectList(items){
- return [...items].sort((a,b)=>{
-  if(a.isTemplate!==b.isTemplate)return a.isTemplate?1:-1;
-  if(!a.isTemplate)return b.updatedAt-a.updatedAt;
+ const users=items.filter(item=>!item.isTemplate);
+ const templates=items.filter(item=>item.isTemplate).sort((a,b)=>{
   const aDaily=a.id.includes('_daily_'), bDaily=b.id.includes('_daily_');
   if(aDaily!==bDaily)return aDaily?-1:1;
   return b.updatedAt-a.updatedAt;
  });
+ return [...users,...templates];
+}
+function dragHandleHTML(p){
+ if(p.isTemplate)return '';
+ return `<button type="button" class="drag-handle" onpointerdown="App.startProjectDrag(event,'${p.id}')" aria-label="按住拖动调整顺序" title="按住拖动调整顺序"><span class="grip-dots"><i></i><i></i><i></i><i></i><i></i><i></i></span></button>`;
+}
+function recordHTML(p){
+ return `<div class="record ${p.isTemplate?'':'sortable-record'}" ${p.isTemplate?'':`data-project-id="${p.id}" data-project-mode="${p.mode}"`}><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?`${esc(templateMeta(p))}${p.credit?`<span class="template-credit">${esc(p.credit)}</span>`:''}`:`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions">${dragHandleHTML(p)}<button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`;
 }
 function project(){return projects.find(p=>p.id===currentId)}
 function theme(){
@@ -1019,9 +1078,9 @@ function homeHTML(){
          <button class="mode-card current" onclick="App.openCreate('thought')"><div class="mode-state">当前模式</div><h3>创建念头整理图</h3><p>${modes.thought.home}</p></button>`}
    </section>
    <section class="history" id="home-history-anchor">
-    <div class="history-head"><div class="history-title-actions"><h2>我的${selected.name}图</h2><button class="mini import-btn" onclick="App.openImport()">导入文字版</button></div><span class="storage-note">自动保存在当前浏览器中</span></div>
+    <div class="history-head"><div class="history-title-actions"><h2>我的${selected.name}图</h2><div class="history-utility-actions"><button class="mini import-btn" onclick="App.openImport()">导入文字版</button><button class="mini batch-delete-btn" ${userGraphCount?`onclick="App.askDeleteAll('${homeMode}')"`:'disabled'}>删除全部</button></div></div><span class="storage-note">自动保存在当前浏览器中</span></div>
     <div class="history-list">
-      ${arr.length?arr.map(p=>`<div class="record"><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?`${esc(templateMeta(p))}${p.credit?`<span class="template-credit">${esc(p.credit)}</span>`:''}`:`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions"><button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
+      ${arr.length?arr.map(p=>recordHTML(p)).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
     </div>
     ${userGraphCount>=5?`<button class="history-return" onclick="App.backToModeChoice()">↑ 返回模式选择</button>`:''}
    </section>`}
@@ -1030,6 +1089,7 @@ function homeHTML(){
 function libraryHTML(){
  const selected=modes[libraryMode];
  const arr=sortProjectList(projects.filter(p=>p.mode===libraryMode));
+ const userGraphCount=arr.filter(p=>!p.isTemplate).length;
  return `${brandbar()}
  <main class="stage library-stage">
   <div class="library-top">
@@ -1043,25 +1103,26 @@ function libraryHTML(){
   <section class="library-panel">
    <section class="history">
     <div class="history-head">
-     <div class="history-title-actions"><h2>我的${selected.name}图</h2><button class="mini import-btn" onclick="App.openImport()">导入文字版</button></div>
+     <div class="history-title-actions"><h2>我的${selected.name}图</h2><div class="history-utility-actions"><button class="mini import-btn" onclick="App.openImport()">导入文字版</button><button class="mini batch-delete-btn" ${userGraphCount?`onclick="App.askDeleteAll('${libraryMode}')"`:'disabled'}>删除全部</button></div></div>
      <span class="storage-note">自动保存在当前浏览器中</span>
     </div>
     <div class="library-actions" style="margin-bottom:18px"><button class="btn btn-primary" onclick="App.openCreate('${libraryMode}')">创建${selected.name}图</button></div>
     <div class="history-list">
-     ${arr.length?arr.map(p=>`<div class="record"><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?`${esc(templateMeta(p))}${p.credit?`<span class="template-credit">${esc(p.credit)}</span>`:''}`:`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions"><button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
+     ${arr.length?arr.map(p=>recordHTML(p)).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
     </div>
    </section>
   </section>
  </main>`;
 }
 function createHTML(){
- const m=modes[creationMode];
+ const m=modes[creationMode],isThought=creationMode==='thought';
  return `${brandbar()}
  <main class="stage"><div class="create-wrap"><button class="back" onclick="App.home()">← 返回首页</button>
   <div class="create-panel"><span class="pill">${m.name}</span><h1 id="typed" class="typed"><span class="cursor"></span></h1>
-   <div class="field"><label>${m.labels[0]}<small>最多 80 字</small></label><input class="input" id="create-title" maxlength="80" placeholder="${m.placeholders[0]}"></div>
-   <div class="field"><label>${m.labels[1]}<small>可选 · 最多 150 字</small></label><textarea class="textarea" id="create-context" maxlength="150" placeholder="${m.placeholders[1]}"></textarea></div>
-   <div class="field"><label>${m.labels[2]}<small>可选 · 最多 150 字</small></label><textarea class="textarea" id="create-goal" maxlength="150" placeholder="${m.placeholders[2]}"></textarea></div>
+   <div class="field"><label>${m.labels[0]}<small>必填 · 最多 80 字</small></label><input class="input" id="create-title" maxlength="80" placeholder="${m.placeholders[0]}"></div>
+   <div class="field"><label>${m.labels[1]}<small>${isThought?'必填':'可选'} · 最多 150 字</small></label><textarea class="textarea" id="create-context" maxlength="150" placeholder="${m.placeholders[1]}"></textarea></div>
+   ${isThought?`<div class="field"><label>我加入的推测或担忧<small>必填 · 最多 150 字</small></label><textarea class="textarea" id="create-subjective" maxlength="150" placeholder="哪些结论是我在不确定中继续推出来的？"></textarea></div>`:''}
+   <div class="field"><label>${m.labels[2]}<small>${isThought?'必填':'可选'} · 最多 150 字</small></label><textarea class="textarea" id="create-goal" maxlength="150" placeholder="${m.placeholders[2]}"></textarea></div>
    <div class="form-actions"><button class="btn btn-primary" onclick="App.create()">创建${m.name}图</button><button class="btn btn-secondary" onclick="App.home()">返回</button></div>
   </div></div></main>`;
 }
@@ -1121,7 +1182,7 @@ function overlayHTML(){
   return `<div class="mask"><div class="modal large"><span class="pill">${m.name} · 只读示例</span><h3 style="margin-top:6px">${overlay.mode==='thought'?'“'+ex.title+'”':ex.title}</h3><p>${esc(ex.context)}<br>${esc(ex.goal)}</p><div>${ex.nodes.map((n,i)=>`<div class="readonly-card" style="--accent:${COLORS[0]}"><b>${overlay.mode==='thought'?'“'+esc(n.title)+'”':esc(n.title)}</b>${overlay.mode==='decision'?decisionSummary(n):thoughtSummary(n)}</div>`).join('')}</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">关闭示例</button><button class="btn btn-primary" onclick="App.openCreate('${overlay.mode}')">新建${m.name}图</button></div></div></div>`;
  }
  if(overlay.type==='branch'||overlay.type==='root'){
-  const p=project(),m=modes[p.mode], edit=overlay.type==='branch'&&overlay.editId, data=overlay.data||{}, rootData=overlay.draft||p;
+  const p=project(),m=modes[p.mode], edit=overlay.type==='branch'&&overlay.editId, data=overlay.data||{}, rootData=overlay.type==='root'?{...p,...(overlay.draft||{})}:p;
   if(overlay.type==='root'){
    if(p.mode==='decision') return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="field"><label><span>问题标题</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>已知背景</span><small>可选 · 最多 150 字</small></label><textarea id="root-context" class="textarea" maxlength="150">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>目标或约束</span><small>可选 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
    return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="form-guide">把念头写下来，再区分实际观察、加入的担忧，以及现在可以做的一件事。</div><div class="field"><label><span>此刻的念头</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>实际观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="root-context" class="textarea" maxlength="150">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="root-subjective" class="textarea" maxlength="150">${esc(rootData.subjective||'')}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="subform rated-subform thought-step-subform"><div class="subform-limit-corner">可选 · 每步最多 100 字</div><div class="subform-head"><div class="subform-title">拆成更小的行动步骤</div><button type="button" class="add-line" style="margin:0" onclick="App.addRootStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步；当念头分支继续增多时，系统会提醒你先把行动拆具体。</div><div id="root-step-list">${stepRows(rootData.steps||[]).replaceAll('App.removeStep','App.removeRootStep')}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
@@ -1149,6 +1210,11 @@ function overlayHTML(){
  if(overlay.type==='resetTemplate') return `<div class="mask"><div class="modal"><h3>恢复示例模板？</h3><p>你在这张模板中的编辑内容会被恢复为最初示例结构。自己新建的思路图不会受到影响。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.doResetTemplate()">恢复模板</button></div></div></div>`;
 
  if(overlay.type==='deleteProject') return `<div class="mask"><div class="modal"><h3>删除这张思路图？</h3><p>删除后，这张思路图与其中的全部分支无法恢复。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-danger" onclick="App.doDeleteProject()">确认删除</button></div></div></div>`;
+ if(overlay.type==='deleteAllProjects'){
+  const graphName=modes[overlay.mode].name+'图';
+  if(overlay.step===1) return `<div class="mask"><div class="modal"><h3>删除全部${graphName}？</h3><p>将删除当前浏览器中保存的全部<strong>${graphName}</strong>，共 ${overlay.count} 张。</p><p>示例模板不受影响；另一类思路图也不会被删除。</p><div class="batch-danger-note">有需要保留的内容时，建议先逐张导出文字版，再进行批量删除。</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-danger" onclick="App.confirmDeleteAll()">继续删除</button></div></div></div>`;
+  return `<div class="mask"><div class="modal"><h3>确定删除全部${graphName}？</h3><p>即将删除 ${overlay.count} 张${graphName}。此操作不可逆，删除后无法恢复。</p><p>内置示例模板仍会保留。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">返回</button><button class="btn btn-danger" onclick="App.doDeleteAllProjects()">确定删除</button></div></div></div>`;
+ }
  if(overlay.type==='limit'){
   const m=modes[project().mode], isTotal=overlay.reason==='total';
   const heading=overlay.reason==='root'?(project().mode==='decision'?'先收束起点方案':'先停在这三条念头'):overlay.reason==='child'?'先停在这三条路径':overlay.reason==='depth'?'这条路径已经很深了':'这张思路图已经很丰富了';
@@ -1436,18 +1502,94 @@ window.App={
  showExample(m){overlay={type:'example',mode:m};renderOverlay()},
  close(){overlay=null;pendingDelete=null;render()},
  create(){
+  const isThought=creationMode==='thought';
   const title=document.getElementById('create-title').value.trim(),context=document.getElementById('create-context').value.trim(),goal=document.getElementById('create-goal').value.trim();
-  let err=contentError(title,'起点标题',true,80)||contentError(context,creationMode==='thought'?'发生了什么':'已知背景',false,150)||contentError(goal,creationMode==='thought'?'改善方向':'目标或约束',false,150);
+  const subjective=isThought?(document.getElementById('create-subjective')?.value||'').trim():'';
+  let err=contentError(title,'起点标题',true,80)
+   ||contentError(context,isThought?'实际观察到的事实':'已知背景',isThought,150)
+   ||(isThought?contentError(subjective,'推测或担忧',true,150):'')
+   ||contentError(goal,isThought?'行动方向':'目标或约束',isThought,150);
   if(err){notify(err);return}
-  const p={id:id('p'),mode:creationMode,title,context,goal,subjective:'',steps:[],nodes:[],createdAt:Date.now(),updatedAt:Date.now(),versions:[]};
-  projects.unshift(p);saveStore();currentId=p.id;level=1;page='editor';render();window.scrollTo(0,0);notify('已创建思路图');
+  const p={id:id('p'),mode:creationMode,title,context,goal,subjective,steps:[],nodes:[],createdAt:Date.now(),updatedAt:Date.now(),versions:[]};
+  addUserProjectAtTop(p);saveStore();currentId=p.id;level=1;page='editor';render();window.scrollTo(0,0);notify('已创建思路图');
  },
  openProject(i){currentId=i;page='editor';level=1;expandedCards=new Set();locatorHidden=false;locatorGroupCursor=null;locatorPhase='absent';locatorViewKey='';locatorWasEligible=false;clearLocatorAnimation();render();window.scrollTo(0,0);setTimeout(()=>App.centerActiveLevel(),30)},
  deleteProject(i){const item=projects.find(p=>p.id===i);if(item?.isTemplate){notify('示例模板不能删除，可进入体验或基于模板创建');return}overlay={type:'deleteProject',id:i};renderOverlay()},
  doDeleteProject(){const item=projects.find(p=>p.id===overlay.id);if(item?.isTemplate){overlay=null;render();notify('示例模板不能删除');return}projects=projects.filter(p=>p.id!==overlay.id);saveStore();overlay=null;render();notify('已删除思路图')},
+ askDeleteAll(mode){
+  if(!['decision','thought'].includes(mode))return;
+  const count=projects.filter(p=>p.mode===mode&&!p.isTemplate).length;
+  if(!count){notify(`暂无可删除的${modes[mode].name}图`);return}
+  overlay={type:'deleteAllProjects',mode,step:1,count};
+  renderOverlay();
+ },
+ confirmDeleteAll(){
+  if(!overlay||overlay.type!=='deleteAllProjects')return;
+  const count=projects.filter(p=>p.mode===overlay.mode&&!p.isTemplate).length;
+  if(!count){overlay=null;render();notify('已没有可删除的思路图');return}
+  overlay={...overlay,step:2,count};
+  renderOverlay();
+ },
+ doDeleteAllProjects(){
+  if(!overlay||overlay.type!=='deleteAllProjects')return;
+  const mode=overlay.mode;
+  const count=projects.filter(p=>p.mode===mode&&!p.isTemplate).length;
+  projects=projects.filter(p=>p.isTemplate||p.mode!==mode);
+  saveStore();
+  overlay=null;
+  render();
+  notify(count?`已删除全部${modes[mode].name}图`:'已没有可删除的思路图');
+ },
+ startProjectDrag(event,projectId){
+  const item=projects.find(p=>p.id===projectId);
+  if(!item||item.isTemplate||event.button>0)return;
+  event.preventDefault();
+  const card=event.currentTarget.closest('.sortable-record');
+  const list=card?.closest('.history-list');
+  if(!card||!list)return;
+  projectDrag={id:projectId,mode:item.mode,pointerId:event.pointerId,handle:event.currentTarget,card,list,startY:event.clientY,moved:false};
+  event.currentTarget.setPointerCapture?.(event.pointerId);
+  document.addEventListener('pointermove',App.moveProjectDrag,{passive:false});
+  document.addEventListener('pointerup',App.endProjectDrag);
+  document.addEventListener('pointercancel',App.endProjectDrag);
+ },
+ moveProjectDrag(event){
+  if(!projectDrag||event.pointerId!==projectDrag.pointerId)return;
+  event.preventDefault();
+  if(!projectDrag.moved&&Math.abs(event.clientY-projectDrag.startY)<5)return;
+  projectDrag.moved=true;
+  projectDrag.card.classList.add('is-dragging');
+  document.body.classList.add('is-project-dragging');
+  const target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.sortable-record');
+  if(target&&target!==projectDrag.card&&target.dataset.projectMode===projectDrag.mode&&target.closest('.history-list')===projectDrag.list){
+   const midpoint=target.getBoundingClientRect().top+target.getBoundingClientRect().height/2;
+   if(event.clientY<midpoint)projectDrag.list.insertBefore(projectDrag.card,target);
+   else projectDrag.list.insertBefore(projectDrag.card,target.nextElementSibling);
+  }
+  if(event.clientY<86)window.scrollBy({top:-14,behavior:'auto'});
+  else if(event.clientY>window.innerHeight-66)window.scrollBy({top:14,behavior:'auto'});
+ },
+ endProjectDrag(event){
+  if(!projectDrag||event.pointerId!==projectDrag.pointerId)return;
+  const state=projectDrag;
+  try{state.handle.releasePointerCapture?.(state.pointerId)}catch(e){}
+  document.removeEventListener('pointermove',App.moveProjectDrag);
+  document.removeEventListener('pointerup',App.endProjectDrag);
+  document.removeEventListener('pointercancel',App.endProjectDrag);
+  state.card.classList.remove('is-dragging');
+  document.body.classList.remove('is-project-dragging');
+  if(state.moved){
+   const ids=[...state.list.querySelectorAll(`.sortable-record[data-project-mode="${state.mode}"]`)].map(card=>card.dataset.projectId);
+   reorderModeUsersFromDOM(state.mode,ids);
+   saveStore();
+  }else{
+   notify('按住六点并拖动，可调整思路图顺序');
+  }
+  projectDrag=null;
+ },
  askResetTemplate(){overlay={type:'resetTemplate'};renderOverlay()},
  doResetTemplate(){const refreshed=resetTemplateById(currentId);overlay=null;if(refreshed){level=1;render();notify('模板已恢复')}else{render();notify('未找到模板')}},
- editRoot(){overlay={type:'root'};renderOverlay()},
+ editRoot(){const p=project();overlay={type:'root',draft:{title:p.title||'',context:p.context||'',subjective:p.subjective||'',goal:p.goal||'',steps:[...(p.steps||[])]}};renderOverlay()},
  saveRoot(){
   const p=project(),t=document.getElementById('root-title').value.trim(),context=document.getElementById('root-context').value.trim(),goal=document.getElementById('root-goal').value.trim();
   if(!t){notify('起点标题不能为空');return}
@@ -1625,33 +1767,40 @@ window.App={
  removeRated(kind,index){captureBranchDraft();const arr=overlay.data[kind]||[];arr.splice(index,1);overlay.data[kind]=arr;renderOverlay()},
  addStep(){captureBranchDraft();const arr=overlay.data.steps||[];if(arr.length>=5){notify('行动最多拆成 5 步');return}arr.push('');overlay.data.steps=arr;renderOverlay()},
  removeStep(index){captureBranchDraft();const arr=overlay.data.steps||[];arr.splice(index,1);overlay.data.steps=arr;renderOverlay()},
- addRootStep(){
-  const values=[...document.querySelectorAll('[data-step]')].map(x=>x.value);
-  if(values.length>=5){notify('行动最多拆成 5 步');return}
+ captureRootDraft(){
+  if(!overlay||overlay.type!=='root')return;
+  const p=project(),draft=overlay.draft||{};
   overlay.draft={
-   title:document.getElementById('root-title').value,
-   context:document.getElementById('root-context').value,
-   subjective:document.getElementById('root-subjective').value,
-   goal:document.getElementById('root-goal').value,
-   steps:values.concat('')
+   title:document.getElementById('root-title')?.value ?? draft.title ?? p.title ?? '',
+   context:document.getElementById('root-context')?.value ?? draft.context ?? p.context ?? '',
+   subjective:document.getElementById('root-subjective')?.value ?? draft.subjective ?? p.subjective ?? '',
+   goal:document.getElementById('root-goal')?.value ?? draft.goal ?? p.goal ?? '',
+   steps:[...document.querySelectorAll('[data-step]')].map(x=>x.value)
   };
+ },
+ addRootStep(){
+  this.captureRootDraft();
+  const values=overlay.draft.steps||[];
+  if(values.length>=5){notify('行动最多拆成 5 步');return}
+  overlay.draft.steps=values.concat('');
   renderOverlay();
  },
  removeRootStep(index){
-  const values=[...document.querySelectorAll('[data-step]')].map(x=>x.value);
+  this.captureRootDraft();
+  const values=[...(overlay.draft.steps||[])];
   values.splice(index,1);
-  overlay.draft={
-   title:document.getElementById('root-title').value,
-   context:document.getElementById('root-context').value,
-   subjective:document.getElementById('root-subjective').value,
-   goal:document.getElementById('root-goal').value,
-   steps:values
-  };
+  overlay.draft.steps=values;
   renderOverlay();
  },
  openGateTarget(){
   const target=overlay.gate==='root'?null:overlay.targetId;
-  overlay=target?{type:'branch',editId:target,data:JSON.parse(JSON.stringify(nodeAt(project().nodes,target).node))}:{type:'root'};
+  if(target){
+   overlay={type:'branch',editId:target,data:JSON.parse(JSON.stringify(nodeAt(project().nodes,target).node))};
+   renderOverlay();
+   return;
+  }
+  const p=project();
+  overlay={type:'root',fromGate:true,draft:{title:p.title||'',context:p.context||'',subjective:p.subjective||'',goal:p.goal||'',steps:[...(p.steps||[])]}};
   renderOverlay();
  },
  move(nodeId,dir){const p=project(),f=nodeAt(p.nodes,nodeId),target=f.index+dir;if(target<0||target>=f.arr.length)return;[f.arr[f.index],f.arr[target]]=[f.arr[target],f.arr[f.index]];touch(p,'顺序已调整')},
@@ -1676,7 +1825,7 @@ window.App={
    const data=extractImportedData(raw),errors=validateImportedGraph(data);
    if(errors.length){const info=importErrorCategory(errors);overlay={type:'importError',draft:raw,category:info.kind,primary:info.primary,more:errors.length-1};renderOverlay();return}
    const p=importedProject(data);
-   projects.unshift(p);saveStore();homeMode=p.mode;currentId=p.id;page='editor';level=1;expandedCards=new Set();overlay=null;render();window.scrollTo(0,0);notify('已导入为可编辑思路图');
+   addUserProjectAtTop(p);saveStore();homeMode=p.mode;currentId=p.id;page='editor';level=1;expandedCards=new Set();overlay=null;render();window.scrollTo(0,0);notify('已导入为可编辑思路图');
   }catch(e){overlay={type:'importError',format:true,draft:raw};renderOverlay()}
  },
  saveVersion(){
@@ -1704,16 +1853,16 @@ window.App={
   Object.assign(p,JSON.parse(JSON.stringify(v.data)),{id:keepId,versions:keepVersions,isTemplate:keepTemplate||false,updatedAt:Date.now()});
   saveStore();overlay=null;level=1;expandedCards=new Set();render();notify('已恢复历史版本');
  },
- cloneProject(projectId){const source=projects.find(item=>item.id===projectId);if(!source){notify('未找到要复制的思路图');return}const copy=JSON.parse(JSON.stringify(source));copy.id=id('p');copy.isTemplate=false;copy.versions=[];copy.title=('拷贝·'+source.title).slice(0,80);copy.nodes=reIdNodes(copy.nodes||[]);copy.createdAt=Date.now();copy.updatedAt=Date.now();projects.unshift(copy);saveStore();homeMode=copy.mode;render();notify('已创建思路图副本')},
+ cloneProject(projectId){const source=projects.find(item=>item.id===projectId);if(!source){notify('未找到要复制的思路图');return}const copy=JSON.parse(JSON.stringify(source));copy.id=id('p');copy.isTemplate=false;copy.versions=[];delete copy.templateMeta;delete copy.credit;copy.title=('拷贝·'+source.title).slice(0,80);copy.nodes=reIdNodes(copy.nodes||[]);copy.createdAt=Date.now();copy.updatedAt=Date.now();addUserProjectAtTop(copy);saveStore();homeMode=copy.mode;render();notify('已创建思路图副本')},
  exportFull(){const p=project();overlay={type:'export',title:'导出整张思路图',text:withImportBlock(fullText(p),cleanExportGraph(p))};renderOverlay()},
  exportPath(nodeId){const p=project(),nodes=pathNodesClone(p,nodeId);overlay={type:'export',title:'导出当前路径',text:withImportBlock(pathText(p,nodeId),cleanExportGraph(p,nodes))};renderOverlay()},
  copyExport(){const b=document.getElementById('exportBox');attemptCopyText(b.value,'文本已复制')},
  branchAsNew(nodeId){
   const old=project(),f=nodeId?nodeAt(old.nodes,nodeId):null,n=f?.node||null;
   const p={id:id('p'),mode:'decision',title:n?.title||old.title,context:n?((n.facts||[]).join('；')||n.note||''):(old.context||''),goal:'从原思路图的某条分支继续分析。',nodes:n?JSON.parse(JSON.stringify(n.children||[])):[],createdAt:Date.now(),updatedAt:Date.now()};
-  projects.unshift(p);saveStore();currentId=p.id;page='editor';level=1;overlay=null;render();notify('已基于该分支新建思路图');
+  addUserProjectAtTop(p);saveStore();currentId=p.id;page='editor';level=1;overlay=null;render();notify('已基于该分支新建思路图');
  },
- convertDecision(){const old=project();const p={id:id('p'),mode:'decision',title:'我现在可以具体做什么？',context:'从念头整理转入执行：'+old.title,goal:'把念头转化为可以推进的行动。',nodes:[],createdAt:Date.now(),updatedAt:Date.now()};projects.unshift(p);saveStore();currentId=p.id;page='editor';level=1;overlay=null;render();notify('已进入决策推演')}
+ convertDecision(){const old=project();const p={id:id('p'),mode:'decision',title:'我现在可以具体做什么？',context:'从念头整理转入执行：'+old.title,goal:'把念头转化为可以推进的行动。',nodes:[],createdAt:Date.now(),updatedAt:Date.now()};addUserProjectAtTop(p);saveStore();currentId=p.id;page='editor';level=1;overlay=null;render();notify('已进入决策推演')}
 };
 document.addEventListener('click',event=>{
  if(brandMenuOpen && !event.target.closest('.brand-shell')){
