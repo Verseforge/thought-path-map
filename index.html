@@ -82,6 +82,11 @@ button:disabled{cursor:not-allowed}
 .hero-sample{border:1px solid var(--line);background:var(--paper);border-radius:22px;padding:25px;box-shadow:var(--shadow);height:398px;box-sizing:border-box;overflow:hidden}
 #preview-cycle-host{height:308px;overflow:hidden}
 .tiny{font-size:12px;color:var(--muted);text-wrap:pretty;word-break:normal}
+.preview-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.preview-only{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-size:11px;white-space:nowrap}
+.preview-note{min-width:0}
+.hero-sample.is-demo{cursor:pointer}
+.hero-sample.is-demo:active{transform:scale(.998)}
 .sample-root{margin-top:18px;border:1px solid var(--line);border-radius:14px;background:color-mix(in srgb,var(--paper) 94%, var(--bg));padding:16px;font-size:14px}
 .sample-root strong{display:block;margin-bottom:6px}
 .sample-list{border-left:1px solid var(--line);margin:16px 0 0 18px;padding-left:17px;display:grid;gap:9px}
@@ -121,6 +126,7 @@ button:disabled{cursor:not-allowed}
 .example-badge{display:inline-flex;padding:3px 8px;margin-right:8px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-size:11px;vertical-align:1px;white-space:nowrap}
 .template-inline{display:inline-flex;margin-left:0;padding:3px 8px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-size:11px;line-height:1.45;vertical-align:middle}
 .template-note{display:inline-flex;padding:3px 8px;border-radius:999px;background:var(--sage-soft);color:var(--sage);font-size:11px;margin-right:8px;white-space:nowrap}
+.template-credit{display:block;margin-top:5px;font-size:11px;line-height:1.65;color:var(--muted)}
 
 .history-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:20px}
 .history-title-actions{display:flex;align-items:center;gap:14px;min-width:0}
@@ -466,9 +472,13 @@ const examples={
  ]}
 };
 
+const previewExamples={"decision":[{"title":"这个 AI 工具第一版要做到什么程度？","path":["基础结构 + 单次 AI 检查","先完成结构化卡片交互","邀请自己完成一次真实测试"]},{"title":"想报个运动兴趣班，选什么比较适合我？","path":["我想规律动起来，也希望能坚持","先试一节成人芭蕾体验课","体验后再决定要不要报名"]}],"thought":[{"title":"这次分享反馈不多，是不是说明我不值得继续做？","path":["是不是大家根本不喜欢我的内容？","是不是我的表达方式不够好？","先找具体反馈再判断"]},{"title":"她回复变慢了，是不是不想和我聊天了？","path":["是不是我刚才说错话了？","是不是她觉得我很烦？","先别靠回复速度判断关系"]}]};
+
 function templateProjects(){
  const time=Date.now()-1000;
  return [
+  {"id":"builtin_decision_daily_template_v1","isTemplate":true,"mode":"decision","templateMeta":"生活化示例 · 可进入体验 · 不可删除","credit":"灵感来自朋友，感谢授权。","title":"想报一个运动兴趣班，选什么比较适合我？","context":"平时久坐，想通过固定上课增加运动量、出点汗。对乐器和书画不感兴趣，一个人爬山也不容易坚持。","goal":"先尝试体验课，再考虑长期报名；重点是能活动身体、愿意持续去，也不要一开始压力太大。","createdAt":time+4,"updatedAt":time+4,"nodes":[{"id":"dd_a","title":"去试成人芭蕾","facts":["成人芭蕾课程通常可先预约体验；我对改善体态和轻度拉伸有点心动。"],"costs":[{"certainty":"较高可能","text":"需要先适应陌生动作和课堂氛围。"}],"risks":[{"certainty":"中等可能","text":"如果对柔韧性要求过高，可能会很挫败。"}],"returns":[{"certainty":"较高可能","text":"有机会兼顾活动身体与体态训练。"}],"children":[{"id":"dd_a1","title":"先约一节成人芭蕾体验课","facts":["体验课能直接感受强度、老师节奏和自己是否愿意再来。"],"costs":[{"certainty":"已确定","text":"需要花一次试听时间和费用。"}],"risks":[{"certainty":"较低可能","text":"一次体验未必代表长期感受。"}],"returns":[{"certainty":"较高可能","text":"比继续网上纠结更容易获得真实判断。"}],"children":[{"id":"dd_a1a","title":"体验后记录身体感受和想不想再去","facts":["是否觉得累但舒服、是否期待下一节，都是可观察的信息。"],"costs":[{"certainty":"已确定","text":"需要认真复盘一次体验。"}],"risks":[{"certainty":"较低可能","text":"当天情绪可能影响判断。"}],"returns":[{"certainty":"较高可能","text":"能依据真实体验决定是否继续。"}],"children":[]}]},{"id":"dd_a2","title":"先问清是否需要柔韧基础","facts":["我对芭蕾的担心主要来自踮脚和柔韧性要求。"],"costs":[{"certainty":"较低可能","text":"需要咨询机构或试听前沟通。"}],"risks":[{"certainty":"较低可能","text":"不同机构课程难度可能不同。"}],"returns":[{"certainty":"较高可能","text":"能避免被想象中的门槛劝退。"}],"children":[]}]},{"id":"dd_b","title":"去试零基础爵士舞","facts":["爵士舞看起来更有运动量，也有零基础课程可以了解。"],"costs":[{"certainty":"中等可能","text":"需要适应节奏和记动作。"}],"risks":[{"certainty":"中等可能","text":"课堂节奏太快时可能跟不上。"}],"returns":[{"certainty":"较高可能","text":"更可能达到出汗和释放压力的目标。"}],"children":[{"id":"dd_b1","title":"确认零基础班是否真的从基础教起","facts":["我担心网上说的“新人不友好”会发生在自己身上。"],"costs":[{"certainty":"较低可能","text":"需要看课程说明或询问老师。"}],"risks":[{"certainty":"中等可能","text":"试听时仍可能觉得节奏快。"}],"returns":[{"certainty":"较高可能","text":"可以更准确判断入门门槛。"}],"children":[]},{"id":"dd_b2","title":"比较上课后的运动量和兴趣感","facts":["我的目标不只是好看，也希望真的活动起来。"],"costs":[{"certainty":"已确定","text":"需要至少实际体验一次。"}],"risks":[{"certainty":"较低可能","text":"喜欢音乐不代表喜欢持续练习。"}],"returns":[{"certainty":"较高可能","text":"能判断它是否符合长期目标。"}],"children":[]}]},{"id":"dd_c","title":"考虑模特形体课","facts":["朋友推荐形体课可以改善体态，但我的首要目标是增加运动量。"],"costs":[{"certainty":"中等可能","text":"可能要另外找更能出汗的活动。"}],"risks":[{"certainty":"较高可能","text":"课程重点与我真正需求不一致。"}],"returns":[{"certainty":"中等可能","text":"可能帮助改善站姿和体态。"}],"children":[{"id":"dd_c1","title":"先确认课程强度是否满足运动目标","facts":["如果课程以仪态训练为主，可能不等同于锻炼身体。"],"costs":[{"certainty":"较低可能","text":"需要咨询课程内容。"}],"risks":[{"certainty":"中等可能","text":"容易因为推荐而偏离初衷。"}],"returns":[{"certainty":"较高可能","text":"能让选择重新围绕真实需求。"}],"children":[]}]}]},
+  {"id":"builtin_thought_daily_template_v1","isTemplate":true,"mode":"thought","templateMeta":"生活化示例 · 可进入体验 · 不可删除","title":"她回复变慢了，是不是不想和我聊天了？","context":"我今天给朋友发了消息，她隔了几个小时才回复，内容也比平时短一些。","subjective":"我开始猜她是不是嫌我烦，甚至觉得以后自己都不该再主动找她。","goal":"先别用一次回复速度判断关系；把注意力拉回今天的生活，之后再自然地聊。","steps":["先继续做今天原本安排的事情","下次有合适话题时正常分享，不试探对方"],"createdAt":time+3,"updatedAt":time+3,"nodes":[{"id":"td_a","title":"是不是我刚才说错话了？","fact":"我只看到她回复较慢、内容较短，没有收到她表示不舒服的信息。","subjective":"我把不确定的等待，直接解释成自己做错了事。","action":"先回看聊天内容是否真的有明显冒犯，再停止反复检查。","steps":["只复盘一次聊天内容","没有明确问题就先放下"],"children":[{"id":"td_a1","title":"是不是我的话题太无聊了？","fact":"她没有说话题无聊，我也不知道她当时是否忙碌。","subjective":"我把对方的状态都归因到了自己身上。","action":"下次正常聊一个双方都熟悉的小话题。","steps":["想到合适内容再发，不强行找话题"],"children":[{"id":"td_a1a","title":"是不是我以后都不该主动分享了？","fact":"过去我们也有聊得自然的时候。","subjective":"我把一次不顺利扩大成以后都不应该主动。","action":"保留自然分享的空间，不用一次判断未来。","steps":["等自己真的想分享时再发"],"children":[]}]},{"id":"td_a2","title":"是不是我发消息的时机不对？","fact":"我不知道她当时正在做什么。","subjective":"我在缺少信息时，急着寻找自己的错误。","action":"接受对方不一定及时回复。","steps":["发出后先去做别的事"],"children":[]}]},{"id":"td_b","title":"是不是她觉得我很烦？","fact":"目前只有一次回复节奏变化，没有明确的拒绝表达。","subjective":"我把聊天节奏变化想成了对关系的否定。","action":"先不追问、不试探，观察更长一点的相处情况。","steps":["不追加解释性消息"],"children":[{"id":"td_b1","title":"是不是她在敷衍我？","fact":"短回复可能有很多原因，我目前无法确认。","subjective":"我只抓住了最让我难受的一种解释。","action":"等有真实信息时再判断。","steps":["把现在能确认的事实写下来"],"children":[]},{"id":"td_b2","title":"是不是我们关系变淡了？","fact":"关系变化不能只由一次消息速度判断。","subjective":"我把瞬间的不安扩展成长期趋势。","action":"以后找自然机会见面或聊天，再感受真实互动。","steps":["不在今天下结论"],"children":[]}]},{"id":"td_c","title":"是不是以后我都不要主动了？","fact":"主动聊天本身没有错，也没有得到明确拒绝。","subjective":"我想通过完全退缩来避免再次等待的不安。","action":"保持自己的节奏，不为了避免焦虑而突然断开联系。","steps":["今天先不继续追着消息想"],"children":[{"id":"td_c1","title":"我是不是太在意别人的反应了？","fact":"我现在确实会因为等待回复而焦虑。","subjective":"我又开始用这个状态评价自己不好。","action":"先照顾此刻的不安，再慢慢练习把注意力拉回自己。","steps":["放下手机十分钟，做一件手头小事"],"children":[]}]}]},
   {
    id:'builtin_decision_template_v2',isTemplate:true,mode:'decision',
    title:'这个 AI 思路图工具第一版应该做到什么程度？',
@@ -656,9 +666,24 @@ function templateProjects(){
 }
 function ensureTemplates(list){
  const templates=templateProjects();
+ const freshById=new Map(templates.map(t=>[t.id,t]));
  const ids=new Set(list.map(p=>p.id));
  let changed=false;
  templates.forEach(t=>{if(!ids.has(t.id)){list.push(t);changed=true}});
+ list.forEach(item=>{
+  if(!item.isTemplate)return;
+  const fresh=freshById.get(item.id);
+  if(!fresh)return;
+  if(item.templateMeta!==fresh.templateMeta){
+   item.templateMeta=fresh.templateMeta;
+   changed=true;
+  }
+  if((item.credit||'')!==(fresh.credit||'')){
+   if(fresh.credit)item.credit=fresh.credit;
+   else delete item.credit;
+   changed=true;
+  }
+ });
  if(changed)localStorage.setItem(STORAGE,JSON.stringify(list));
  return list;
 }
@@ -670,7 +695,7 @@ function resetTemplateById(templateId){
 }
 
 let projects=ensureTemplates(readStore()), page='home', homeMode=null, creationMode='decision', libraryMode='decision', currentId=null, level=1;
-let overlay=null, pendingDelete=null, typingTimer=null, spotlightId=null, previewTimers=[], brandMenuOpen=false, historyHintTimer=null, historyHintObserver=null;
+let overlay=null, pendingDelete=null, typingTimer=null, spotlightId=null, previewTimers=[], brandMenuOpen=false, historyHintTimer=null, historyHintObserver=null, previewTapAt=0;
 let expandedCards=new Set();
 let locatorHidden=false;
 let locatorGroupCursor=null;
@@ -686,6 +711,16 @@ function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function readStore(){try{return JSON.parse(localStorage.getItem(STORAGE)||'[]')}catch(e){return []}}
 function saveStore(){localStorage.setItem(STORAGE,JSON.stringify(projects))}
 function nowText(ts){const d=new Date(ts),z=n=>String(n).padStart(2,'0');return `${d.getMonth()+1}月${d.getDate()}日 ${z(d.getHours())}:${z(d.getMinutes())}`}
+function templateMeta(p){return p.templateMeta||'三层结构 · 可进入体验 · 不可删除'}
+function sortProjectList(items){
+ return [...items].sort((a,b)=>{
+  if(a.isTemplate!==b.isTemplate)return a.isTemplate?1:-1;
+  if(!a.isTemplate)return b.updatedAt-a.updatedAt;
+  const aDaily=a.id.includes('_daily_'), bDaily=b.id.includes('_daily_');
+  if(aDaily!==bDaily)return aDaily?-1:1;
+  return b.updatedAt-a.updatedAt;
+ });
+}
 function project(){return projects.find(p=>p.id===currentId)}
 function theme(){
  const active = page==='home' ? homeMode : page==='library' ? libraryMode : page==='create' ? creationMode : project()?.mode;
@@ -889,7 +924,10 @@ function render(){
  app.innerHTML=page==='home'?homeHTML():page==='library'?libraryHTML():page==='create'?createHTML():editorHTML();
  renderOverlay();
  if(page==='create') typeHeading();
- if(page==='home'){startPreviewCycle();setupHeroDescriptionReveal()}
+ if(page==='home'){
+  startPreviewCycle();setupHeroDescriptionReveal();
+  document.querySelector('.hero-sample.is-demo')?.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();App.tapPreview()}});
+ }
  if(page==='editor')runLocatorTransition();
 }
 function brandbar(){
@@ -901,34 +939,35 @@ function typePreview(el,text,speed=42){
  const tick=()=>{ if(i<=text.length){el.textContent=text.slice(0,i++); previewTimers.push(setTimeout(tick,speed));} };
  tick();
 }
-function previewSceneHTML(mode,animated=false){
- const ex=examples[mode], isThought=mode==='thought';
- const title=isThought?'“'+ex.title+'”':ex.title;
+function previewSceneHTML(item,mode,animated=false){
+ const isThought=mode==='thought';
+ const title=isThought?'“'+item.title+'”':item.title;
  const label=isThought?'核心念头':'决策起点';
  return `<div class="preview-window ${animated?'':'static'}" data-preview-mode="${mode}">
    <div class="sample-root ${animated?'':'show'}"><strong class="preview-type" data-root>${animated?'':title}</strong><span class="preview-caption" data-caption>${animated?'':label}</span></div>
-   <div class="sample-list">${ex.nodes.map((n,i)=>`<div class="sample-mini ${animated?'':'show'}" data-node="${i}" style="border-left-color:var(--g1)"><span class="preview-type" data-text="${i}">${animated?'':(isThought?'“'+n.title+'”':n.title)}</span></div>`).join('')}</div>
+   <div class="sample-list">${item.path.map((text,i)=>`<div class="sample-mini ${animated?'':'show'}" data-node="${i}" style="border-left-color:var(--g1)"><span class="preview-type" data-text="${i}">${animated?'':(isThought?'“'+text+'”':text)}</span></div>`).join('')}</div>
  </div>`;
 }
 function previewPanelHTML(){
- const note='结构预览 · 同色为同源分支';
- const suffix=homeMode?'':' · 两种模式交替展示';
- return `<div class="hero-sample"><div class="tiny">${note}${suffix}</div><div id="preview-cycle-host"></div></div>`;
+ const note='可追溯上下级分支，还原完整思路路径';
+ return `<div class="hero-sample is-demo" onclick="App.tapPreview()" tabindex="0" role="button" aria-label="结构预览，仅供展示；请在下方选择模式开始"><div class="tiny preview-head"><span class="preview-only">仅供展示</span><span class="preview-note">${note}</span></div><div id="preview-cycle-host"></div></div>`;
 }
 function startPreviewCycle(){
  clearPreviewTimers();
  if(page!=='home')return;
  const host=document.getElementById('preview-cycle-host'); if(!host)return;
- const first=homeMode||'decision';
- const run=(mode)=>{
+ const sequence=homeMode
+  ? previewExamples[homeMode].map(item=>({mode:homeMode,item}))
+  : [...previewExamples.decision.map(item=>({mode:'decision',item})),...previewExamples.thought.map(item=>({mode:'thought',item}))];
+ let index=0;
+ const run=()=>{
   if(page!=='home')return;
-  const active=homeMode||mode;
-  host.innerHTML=previewSceneHTML(active,true);
+  const current=sequence[index%sequence.length], active=current.mode, ex=current.item, isThought=active==='thought';
+  host.innerHTML=previewSceneHTML(ex,active,true);
   const scene=host.querySelector('.preview-window');
-  const ex=examples[active], isThought=active==='thought';
   const rootText=isThought?'“'+ex.title+'”':ex.title;
   const captionText=isThought?'核心念头':'决策起点';
-  const texts=ex.nodes.map(n=>isThought?'“'+n.title+'”':n.title);
+  const texts=ex.path.map(text=>isThought?'“'+text+'”':text);
   const rootStart=360, rootSpeed=34;
   const captionStart=rootStart+rootText.length*rootSpeed+145;
   const captionSpeed=54;
@@ -943,14 +982,13 @@ function startPreviewCycle(){
    previewTimers.push(setTimeout(()=>typePreview(scene.querySelector(`[data-text="${i}"]`),text,32),showAt+145));
   });
   previewTimers.push(setTimeout(()=>scene?.classList.add('fade-out'),8000));
-  const next=homeMode?homeMode:(active==='decision'?'thought':'decision');
-  previewTimers.push(setTimeout(()=>run(next),9000));
+  previewTimers.push(setTimeout(()=>{index++;run()},9000));
  };
- run(first);
+ run();
 }
 function homeHTML(){
  const selected = homeMode ? modes[homeMode] : null;
- const arr = homeMode ? projects.filter(p=>p.mode===homeMode).sort((a,b)=>b.updatedAt-a.updatedAt) : [];
+ const arr = homeMode ? sortProjectList(projects.filter(p=>p.mode===homeMode)) : [];
  const userGraphCount = homeMode ? arr.filter(p=>!p.isTemplate).length : 0;
  const heroDesc = homeMode==='decision'
   ? '从一个问题出发，比较条件、成本与回报，梳理选择路径。'
@@ -983,7 +1021,7 @@ function homeHTML(){
    <section class="history" id="home-history-anchor">
     <div class="history-head"><div class="history-title-actions"><h2>我的${selected.name}图</h2><button class="mini import-btn" onclick="App.openImport()">导入文字版</button></div><span class="storage-note">自动保存在当前浏览器中</span></div>
     <div class="history-list">
-      ${arr.length?arr.map(p=>`<div class="record"><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?'三层结构 · 可进入体验 · 不可删除':`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions"><button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
+      ${arr.length?arr.map(p=>`<div class="record"><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?`${esc(templateMeta(p))}${p.credit?`<span class="template-credit">${esc(p.credit)}</span>`:''}`:`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions"><button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
     </div>
     ${userGraphCount>=5?`<button class="history-return" onclick="App.backToModeChoice()">↑ 返回模式选择</button>`:''}
    </section>`}
@@ -991,7 +1029,7 @@ function homeHTML(){
 }
 function libraryHTML(){
  const selected=modes[libraryMode];
- const arr=projects.filter(p=>p.mode===libraryMode).sort((a,b)=>b.updatedAt-a.updatedAt);
+ const arr=sortProjectList(projects.filter(p=>p.mode===libraryMode));
  return `${brandbar()}
  <main class="stage library-stage">
   <div class="library-top">
@@ -1010,7 +1048,7 @@ function libraryHTML(){
     </div>
     <div class="library-actions" style="margin-bottom:18px"><button class="btn btn-primary" onclick="App.openCreate('${libraryMode}')">创建${selected.name}图</button></div>
     <div class="history-list">
-     ${arr.length?arr.map(p=>`<div class="record"><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?'三层结构 · 可进入体验 · 不可删除':`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions"><button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
+     ${arr.length?arr.map(p=>`<div class="record"><div><div class="record-title">${p.isTemplate?'<span class="example-badge">示例模板</span>':''}${p.mode==='thought'?'“'+esc(p.title)+'”':esc(p.title)}</div><div class="record-meta">${p.isTemplate?`${esc(templateMeta(p))}${p.credit?`<span class="template-credit">${esc(p.credit)}</span>`:''}`:`${modes[p.mode].name} · 更新于 ${nowText(p.updatedAt)}`}</div></div><div class="record-actions"><button class="mini" onclick="App.openProject('${p.id}')">${p.isTemplate?'进入模板':'继续编辑'}</button><button class="mini" onclick="App.cloneProject('${p.id}')">${p.isTemplate?'基于模板创建':'复制'}</button>${p.isTemplate?'':`<button class="mini warn" onclick="App.deleteProject('${p.id}')">删除</button>`}</div></div>`).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
     </div>
    </section>
   </section>
@@ -1336,7 +1374,17 @@ window.App={
  openGentleTip(){brandMenuOpen=false;document.querySelector('.brand-menu')?.remove();document.querySelector('.brand-chevron')?.classList.remove('is-open');overlay={type:'gentleTip'};renderOverlay()},
  openLibrary(){this.dismissHistoryHint();overlay=null;pendingDelete=null;brandMenuOpen=false;libraryMode='decision';page='library';currentId=null;render();window.scrollTo(0,0)},
  setLibraryMode(m){libraryMode=m;render();window.scrollTo({top:0,behavior:'smooth'})},
- selectMode(m){homeMode=m;brandMenuOpen=false;render();this.showHistoryHint()},
+ selectMode(m){homeMode=m;brandMenuOpen=false;previewTapAt=0;render();this.showHistoryHint()},
+ tapPreview(){
+  const now=Date.now();
+  if(now-previewTapAt<1300){
+   previewTapAt=0;
+   notify('这里只是结构预览，请选择你要创建的思路图');
+   this.backToModeChoice();
+   return;
+  }
+  previewTapAt=now;
+ },
  showHistoryHint(){
   this.dismissHistoryHint(true);
   if(page!=='home'||!homeMode||!window.matchMedia('(max-width:650px)').matches)return;
