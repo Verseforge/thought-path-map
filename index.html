@@ -1185,14 +1185,14 @@ function overlayHTML(){
   const p=project(),m=modes[p.mode], edit=overlay.type==='branch'&&overlay.editId, data=overlay.data||{}, rootData=overlay.type==='root'?{...p,...(overlay.draft||{})}:p;
   if(overlay.type==='root'){
    if(p.mode==='decision') return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="field"><label><span>问题标题</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>已知背景</span><small>可选 · 最多 150 字</small></label><textarea id="root-context" class="textarea" maxlength="150">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>目标或约束</span><small>可选 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
-   return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="form-guide">把念头写下来，再区分实际观察、加入的担忧，以及现在可以做的一件事。</div><div class="field"><label><span>此刻的念头</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>实际观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="root-context" class="textarea" maxlength="150">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="root-subjective" class="textarea" maxlength="150">${esc(rootData.subjective||'')}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="subform rated-subform thought-step-subform"><div class="subform-limit-corner">可选 · 每步最多 100 字</div><div class="subform-head"><div class="subform-title">拆成更小的行动步骤</div><button type="button" class="add-line" style="margin:0" onclick="App.addRootStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步；当念头分支继续增多时，系统会提醒你先把行动拆具体。</div><div id="root-step-list">${stepRows(rootData.steps||[]).replaceAll('App.removeStep','App.removeRootStep')}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
+   return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="form-guide">把念头写下来，再区分实际观察、加入的担忧，以及现在可以做的一件事。</div><div class="field"><label><span>此刻的念头</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>实际观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="root-context" class="textarea" maxlength="150">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="root-subjective" class="textarea" maxlength="150">${esc(rootData.subjective||'')}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="subform rated-subform thought-step-subform"><div class="subform-limit-corner">可选 · 每步 2–100 字</div><div class="subform-head"><div class="subform-title">拆成更小的行动步骤</div><button type="button" class="add-line" style="margin:0" onclick="App.addRootStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步；添加后的每一步至少填写 2 个字符。当念头分支继续增多时，系统会提醒你先把行动拆具体。</div><div id="root-step-list">${stepRows(rootData.steps||[]).replaceAll('App.removeStep','App.removeRootStep')}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
   }
   if(p.mode==='decision'){
    const d=decisionData(data);
-   return `<div class="mask"><div class="modal large branch-form"><h3>${edit?'编辑选择':'添加一个选择'}</h3><div class="form-guide">一个选择至少需要写下支撑它的事实或条件。事实与条件最多 150 字；成本、风险、回报每类最多 5 条，且每类内容合计最多 150 字。</div><div class="field"><label><span>选择标题</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="例如：基础结构 + 单次 AI 检查"></div><div class="field"><label><span>事实与条件</span><small>必填 · 最多 150 字</small></label><textarea id="decision-facts" class="textarea" maxlength="150" placeholder="已经确定的信息，或这个选择成立的条件">${esc((d.facts||[]).join('\n') || d.note || '')}</textarea></div>${['costs','risks','returns'].map((key,i)=>`<div class="subform rated-subform"><div class="subform-limit-corner">${ratedLimitText(d[key])}</div><div class="subform-head"><div class="subform-title">${['成本','风险','回报'][i]}</div><button type="button" class="add-line" style="margin:0" onclick="App.addRated('${key}')">+ 添加</button></div><div class="subform-help">${['可能的付出、支出或牺牲','可能导致的不利后果或需要防范的问题','选择这条路径可能获得的收益'][i]}</div><div id="rows-${key}">${rateRows(key,d[key])}</div></div>`).join('')}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存选择</button></div></div></div>`;
+   return `<div class="mask"><div class="modal large branch-form"><h3>${edit?'编辑选择':'添加一个选择'}</h3><div class="form-guide">一个选择至少需要写下支撑它的事实或条件。事实与条件最多 150 字；成本、风险、回报每类最多 5 条，且每类内容合计最多 150 字。</div><div class="field"><label><span>选择标题</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="例如：基础结构 + 单次 AI 检查"></div><div class="field"><label><span>事实与条件</span><small>必填 · 最多 150 字</small></label><textarea id="decision-facts" class="textarea" maxlength="150" placeholder="已经确定的信息，或这个选择成立的条件">${esc((d.facts||[]).join('\n') || d.note || '')}</textarea></div>${['costs','risks','returns'].map((key,i)=>`<div class="subform rated-subform"><div class="subform-limit-corner">${ratedLimitText(d[key])}</div><div class="subform-head"><div class="subform-title">${['成本','风险','回报'][i]}</div><button type="button" class="add-line" style="margin:0" onclick="App.addRated('${key}')">+ 添加</button></div><div class="subform-help">${['可能的付出、支出或牺牲','可能导致的不利后果或需要防范的问题','选择这条路径可能获得的收益'][i]}；添加后的每条内容至少填写 2 个字符。</div><div id="rows-${key}">${rateRows(key,d[key])}</div></div>`).join('')}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存选择</button></div></div></div>`;
   }
   const d=thoughtData(data), mustSteps=(countNodes(p)>=30 && !edit);
-  return `<div class="mask"><div class="modal large branch-form"><h3>${overlay.fromStash?'继续整理暂存念头':(edit?'编辑念头':'添加一个延伸念头')}</h3>${overlay.fromStash&&overlay.stashNote?`<div class="form-guide">暂存时记录：${esc(overlay.stashNote)}</div>`:''}<div class="form-guide">每一条延伸念头都需要回到事实、推测和行动；各项内容最多 150 字。${mustSteps?'当前内容已经很多，这一条需要同时拆出行动步骤。':''}</div><div class="field"><label><span>当前念头</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="写下此刻继续冒出来的一句话"></div><div class="field"><label><span>我观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="thought-fact" class="textarea" maxlength="150" placeholder="只写已经观察到或确认的信息">${esc(d.fact||d.note||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="thought-subjective" class="textarea" maxlength="150" placeholder="哪些结论是我在情绪中继续推出来的？">${esc(d.subjective)}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="thought-action" class="textarea" maxlength="150" placeholder="写下一件能够改变现状或验证判断的事情">${esc(d.action)}</textarea></div><div class="subform"><div class="subform-head"><div class="subform-title">把行动拆成小步骤${mustSteps?'<span class="required">至少一步</span>':''}</div><button type="button" class="add-line" style="margin:0" onclick="App.addStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步，让行动门槛更低，而不是继续向坏处推演。</div><div id="step-list">${stepRows(d.steps)}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存念头</button></div></div></div>`;
+  return `<div class="mask"><div class="modal large branch-form"><h3>${overlay.fromStash?'继续整理暂存念头':(edit?'编辑念头':'添加一个延伸念头')}</h3>${overlay.fromStash&&overlay.stashNote?`<div class="form-guide">暂存时记录：${esc(overlay.stashNote)}</div>`:''}<div class="form-guide">每一条延伸念头都需要回到事实、推测和行动；各项内容最多 150 字。${mustSteps?'当前内容已经很多，这一条需要同时拆出行动步骤。':''}</div><div class="field"><label><span>当前念头</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="写下此刻继续冒出来的一句话"></div><div class="field"><label><span>我观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="thought-fact" class="textarea" maxlength="150" placeholder="只写已经观察到或确认的信息">${esc(d.fact||d.note||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="thought-subjective" class="textarea" maxlength="150" placeholder="哪些结论是我在情绪中继续推出来的？">${esc(d.subjective)}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="thought-action" class="textarea" maxlength="150" placeholder="写下一件能够改变现状或验证判断的事情">${esc(d.action)}</textarea></div><div class="subform"><div class="subform-head"><div class="subform-title">把行动拆成小步骤${mustSteps?'<span class="required">至少一步</span>':''}</div><button type="button" class="add-line" style="margin:0" onclick="App.addStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步；添加后的每一步至少填写 2 个字符。让行动门槛更低，而不是继续向坏处推演。</div><div id="step-list">${stepRows(d.steps)}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存念头</button></div></div></div>`;
  }
  if(overlay.type==='actionGate'){
   return `<div class="mask"><div class="modal support-modal"><h3>先停一下，看看你现在更需要什么</h3><p>这条念头已经延伸出了不少方向。继续往下之前，你可以先试着找一个能开始的小行动；如果现在确实想不到，也可以先把状态稳住，再回来整理。</p><ul class="gate-list">${overlay.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="modal-actions"><button class="btn btn-secondary" onclick="App.openSupportChoices()">我现在想不到办法</button><button class="btn btn-primary" onclick="App.openGateTarget()">我能先想一步</button></div></div></div>`;
@@ -1238,6 +1238,19 @@ function renderOverlay(){
  const root=document.getElementById('modal');
  root.className=theme();
  root.innerHTML=overlayHTML();
+}
+function renderOverlayPreservePosition(){
+ const currentModal=document.querySelector('#modal .modal');
+ const modalScrollTop=currentModal?.scrollTop||0;
+ const modalScrollLeft=currentModal?.scrollLeft||0;
+ const pageX=window.scrollX,pageY=window.scrollY;
+ renderOverlay();
+ const nextModal=document.querySelector('#modal .modal');
+ if(nextModal){
+  nextModal.scrollTop=modalScrollTop;
+  nextModal.scrollLeft=modalScrollLeft;
+ }
+ if(window.scrollX!==pageX||window.scrollY!==pageY)window.scrollTo(pageX,pageY);
 }
 function touch(p,msg){p.updatedAt=Date.now();saveStore();render();if(msg)notify(msg)}
 function rootToText(p){
@@ -1760,13 +1773,46 @@ window.App={
   container.push(node);overlay=null;touch(p,'已暂存这条念头');
  },
  addRated(kind){
-  captureBranchDraft();const arr=overlay.data[kind]||[];
+  captureBranchDraft();
+  const arr=overlay.data[kind]||[];
+  const label={costs:'成本',risks:'风险',returns:'回报'}[kind]||'内容';
+  const current=arr[arr.length-1];
+  const currentText=String(current?.text||'').trim();
+  if(!currentText){notify(`请先填写当前${label}内容，再添加下一条`);return}
+  const err=contentError(currentText,label,true,150);
+  if(err){notify(err);return}
   if(arr.length>=5){notify('每一类最多添加 5 条');return}
-  arr.push({certainty:'中等可能',text:''});overlay.data[kind]=arr;renderOverlay();
+  if(ratedTotal(arr)>=150){notify(`${label}内容已达到 150 字上限`);return}
+  arr.push({certainty:'中等可能',text:''});
+  overlay.data[kind]=arr;
+  renderOverlayPreservePosition();
  },
- removeRated(kind,index){captureBranchDraft();const arr=overlay.data[kind]||[];arr.splice(index,1);overlay.data[kind]=arr;renderOverlay()},
- addStep(){captureBranchDraft();const arr=overlay.data.steps||[];if(arr.length>=5){notify('行动最多拆成 5 步');return}arr.push('');overlay.data.steps=arr;renderOverlay()},
- removeStep(index){captureBranchDraft();const arr=overlay.data.steps||[];arr.splice(index,1);overlay.data.steps=arr;renderOverlay()},
+ removeRated(kind,index){
+  captureBranchDraft();
+  const arr=overlay.data[kind]||[];
+  arr.splice(index,1);
+  overlay.data[kind]=arr;
+  renderOverlayPreservePosition();
+ },
+ addStep(){
+  captureBranchDraft();
+  const arr=overlay.data.steps||[];
+  const currentText=String(arr[arr.length-1]||'').trim();
+  if(!currentText){notify('请先填写当前行动步骤，再添加下一步');return}
+  const err=contentError(currentText,'行动步骤',true,100);
+  if(err){notify(err);return}
+  if(arr.length>=5){notify('行动最多拆成 5 步');return}
+  arr.push('');
+  overlay.data.steps=arr;
+  renderOverlayPreservePosition();
+ },
+ removeStep(index){
+  captureBranchDraft();
+  const arr=overlay.data.steps||[];
+  arr.splice(index,1);
+  overlay.data.steps=arr;
+  renderOverlayPreservePosition();
+ },
  captureRootDraft(){
   if(!overlay||overlay.type!=='root')return;
   const p=project(),draft=overlay.draft||{};
@@ -1781,16 +1827,20 @@ window.App={
  addRootStep(){
   this.captureRootDraft();
   const values=overlay.draft.steps||[];
+  const currentText=String(values[values.length-1]||'').trim();
+  if(!currentText){notify('请先填写当前行动步骤，再添加下一步');return}
+  const err=contentError(currentText,'行动步骤',true,100);
+  if(err){notify(err);return}
   if(values.length>=5){notify('行动最多拆成 5 步');return}
   overlay.draft.steps=values.concat('');
-  renderOverlay();
+  renderOverlayPreservePosition();
  },
  removeRootStep(index){
   this.captureRootDraft();
   const values=[...(overlay.draft.steps||[])];
   values.splice(index,1);
   overlay.draft.steps=values;
-  renderOverlay();
+  renderOverlayPreservePosition();
  },
  openGateTarget(){
   const target=overlay.gate==='root'?null:overlay.targetId;
