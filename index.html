@@ -20,6 +20,7 @@ button,input,textarea{font:inherit}
 button{cursor:pointer}
 button:disabled{cursor:not-allowed}
 .hidden{display:none!important}
+.file-input-hidden{position:fixed;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
 .theme-decision{
  --bg:#faf9f5;--paper:#ffffff;--ink:#27313b;--muted:#687684;--line:#dbe2ea;
  --sage:hsl(216 15% 55%);--sage-soft:hsl(216 20% 94%);--surface-soft:hsl(216 22% 96%);
@@ -824,9 +825,9 @@ function contentError(value,label,required=false,max=150){
 }
 function checkRootContent(p,title,context,goal,subjective='',steps=[]){
  let err=contentError(title,'起点标题',true,80); if(err)return err;
- err=contentError(context,p.mode==='thought'?'实际观察到的事实':'已知背景',p.mode==='thought',300); if(err)return err;
- err=contentError(goal,p.mode==='thought'?'行动方向':'目标或约束',p.mode==='thought',p.mode==='thought'?150:300); if(err)return err;
- if(p.mode==='thought'){err=contentError(subjective,'推测或担忧',true,300); if(err)return err;}
+ err=contentError(context,p.mode==='thought'?'实际观察到的事实':'已知背景',p.mode==='thought',150); if(err)return err;
+ err=contentError(goal,p.mode==='thought'?'行动方向':'目标或约束',p.mode==='thought',150); if(err)return err;
+ if(p.mode==='thought'){err=contentError(subjective,'推测或担忧',true,150); if(err)return err;}
  for(const step of steps){err=contentError(step,'行动步骤',true,100); if(err)return err;}
  return '';
 }
@@ -1078,7 +1079,7 @@ function homeHTML(){
          <button class="mode-card current" onclick="App.openCreate('thought')"><div class="mode-state">当前模式</div><h3>创建念头整理图</h3><p>${modes.thought.home}</p></button>`}
    </section>
    <section class="history" id="home-history-anchor">
-    <div class="history-head"><div class="history-title-actions"><h2>我的${selected.name}图</h2><div class="history-utility-actions"><button class="mini import-btn" onclick="App.openImport()">导入文字版</button><button class="mini batch-delete-btn" ${userGraphCount?`onclick="App.askDeleteAll('${homeMode}')"`:'disabled'}>删除全部</button></div></div><span class="storage-note">自动保存在当前浏览器中</span></div>
+    <div class="history-head"><div class="history-title-actions"><h2>我的${selected.name}图</h2><div class="history-utility-actions"><button class="mini import-btn" onclick="App.openImport()">导入数据包</button><button class="mini batch-delete-btn" ${userGraphCount?`onclick="App.askDeleteAll('${homeMode}')"`:'disabled'}>删除全部</button></div></div><span class="storage-note">自动保存在当前浏览器中</span></div>
     <div class="history-list">
       ${arr.length?arr.map(p=>recordHTML(p)).join(''):`<div class="empty">你还没有创建${selected.name}图。</div>`}
     </div>
@@ -1103,7 +1104,7 @@ function libraryHTML(){
   <section class="library-panel">
    <section class="history">
     <div class="history-head">
-     <div class="history-title-actions"><h2>我的${selected.name}图</h2><div class="history-utility-actions"><button class="mini import-btn" onclick="App.openImport()">导入文字版</button><button class="mini batch-delete-btn" ${userGraphCount?`onclick="App.askDeleteAll('${libraryMode}')"`:'disabled'}>删除全部</button></div></div>
+     <div class="history-title-actions"><h2>我的${selected.name}图</h2><div class="history-utility-actions"><button class="mini import-btn" onclick="App.openImport()">导入数据包</button><button class="mini batch-delete-btn" ${userGraphCount?`onclick="App.askDeleteAll('${libraryMode}')"`:'disabled'}>删除全部</button></div></div>
      <span class="storage-note">自动保存在当前浏览器中</span>
     </div>
     <div class="library-actions" style="margin-bottom:18px"><button class="btn btn-primary" onclick="App.openCreate('${libraryMode}')">创建${selected.name}图</button></div>
@@ -1120,9 +1121,9 @@ function createHTML(){
  <main class="stage"><div class="create-wrap"><button class="back" onclick="App.home()">← 返回首页</button>
   <div class="create-panel"><span class="pill">${m.name}</span><h1 id="typed" class="typed"><span class="cursor"></span></h1>
    <div class="field"><label>${m.labels[0]}<small>必填 · 最多 80 字</small></label><input class="input" id="create-title" maxlength="80" placeholder="${m.placeholders[0]}"></div>
-   <div class="field"><label>${m.labels[1]}<small>${isThought?'必填':'可选'} · 最多 300 字</small></label><textarea class="textarea" id="create-context" maxlength="300" placeholder="${m.placeholders[1]}"></textarea></div>
-   ${isThought?`<div class="field"><label>我加入的推测或担忧<small>必填 · 最多 300 字</small></label><textarea class="textarea" id="create-subjective" maxlength="300" placeholder="哪些结论是我在不确定中继续推出来的？"></textarea></div>`:''}
-   <div class="field"><label>${m.labels[2]}<small>${isThought?'必填 · 最多 150 字':'可选 · 最多 300 字'}</small></label><textarea class="textarea" id="create-goal" maxlength="${isThought?'150':'300'}" placeholder="${m.placeholders[2]}"></textarea></div>
+   <div class="field"><label>${m.labels[1]}<small>${isThought?'必填':'可选'} · 最多 150 字</small></label><textarea class="textarea" id="create-context" maxlength="150" placeholder="${m.placeholders[1]}"></textarea></div>
+   ${isThought?`<div class="field"><label>我加入的推测或担忧<small>必填 · 最多 150 字</small></label><textarea class="textarea" id="create-subjective" maxlength="150" placeholder="哪些结论是我在不确定中继续推出来的？"></textarea></div>`:''}
+   <div class="field"><label>${m.labels[2]}<small>${isThought?'必填':'可选'} · 最多 150 字</small></label><textarea class="textarea" id="create-goal" maxlength="150" placeholder="${m.placeholders[2]}"></textarea></div>
    <div class="form-actions"><button class="btn btn-primary" onclick="App.create()">创建${m.name}图</button><button class="btn btn-secondary" onclick="App.home()">返回</button></div>
   </div></div></main>`;
 }
@@ -1184,15 +1185,15 @@ function overlayHTML(){
  if(overlay.type==='branch'||overlay.type==='root'){
   const p=project(),m=modes[p.mode], edit=overlay.type==='branch'&&overlay.editId, data=overlay.data||{}, rootData=overlay.type==='root'?{...p,...(overlay.draft||{})}:p;
   if(overlay.type==='root'){
-   if(p.mode==='decision') return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="field"><label><span>问题标题</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>已知背景</span><small>可选 · 最多 300 字</small></label><textarea id="root-context" class="textarea" maxlength="300">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>目标或约束</span><small>可选 · 最多 300 字</small></label><textarea id="root-goal" class="textarea" maxlength="300">${esc(rootData.goal||'')}</textarea></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
-   return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="form-guide">把念头写下来，再区分实际观察、加入的担忧，以及现在可以做的一件事。</div><div class="field"><label><span>此刻的念头</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>实际观察到的事实</span><small>必填 · 最多 300 字</small></label><textarea id="root-context" class="textarea" maxlength="300">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 300 字</small></label><textarea id="root-subjective" class="textarea" maxlength="300">${esc(rootData.subjective||'')}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="subform rated-subform thought-step-subform"><div class="subform-limit-corner">可选 · 每步 2–100 字</div><div class="subform-head"><div class="subform-title">拆成更小的行动步骤</div><button type="button" class="add-line" style="margin:0" onclick="App.addRootStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步；添加后的每一步至少填写 2 个字符。当念头分支继续增多时，系统会提醒你先把行动拆具体。</div><div id="root-step-list">${stepRows(rootData.steps||[]).replaceAll('App.removeStep','App.removeRootStep')}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
+   if(p.mode==='decision') return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="field"><label><span>问题标题</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>已知背景</span><small>可选 · 最多 150 字</small></label><textarea id="root-context" class="textarea" maxlength="150">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>目标或约束</span><small>可选 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
+   return `<div class="mask"><div class="modal large"><h3>编辑${m.start}</h3><div class="form-guide">把念头写下来，再区分实际观察、加入的担忧，以及现在可以做的一件事。</div><div class="field"><label><span>此刻的念头</span><small>必填 · 最多 80 字</small></label><input id="root-title" class="input" maxlength="80" value="${esc(rootData.title)}"></div><div class="field"><label><span>实际观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="root-context" class="textarea" maxlength="150">${esc(rootData.context||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="root-subjective" class="textarea" maxlength="150">${esc(rootData.subjective||'')}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="root-goal" class="textarea" maxlength="150">${esc(rootData.goal||'')}</textarea></div><div class="subform rated-subform thought-step-subform"><div class="subform-limit-corner">可选 · 每步最多 100 字</div><div class="subform-head"><div class="subform-title">拆成更小的行动步骤</div><button type="button" class="add-line" style="margin:0" onclick="App.addRootStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步；当念头分支继续增多时，系统会提醒你先把行动拆具体。</div><div id="root-step-list">${stepRows(rootData.steps||[]).replaceAll('App.removeStep','App.removeRootStep')}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveRoot()">保存</button></div></div></div>`;
   }
   if(p.mode==='decision'){
    const d=decisionData(data);
-   return `<div class="mask"><div class="modal large branch-form"><h3>${edit?'编辑选择':'添加一个选择'}</h3><div class="form-guide">一个选择至少需要写下支撑它的事实或条件。事实与条件最多 150 字；成本、风险、回报每类最多 5 条，且每类内容合计最多 150 字。</div><div class="field"><label><span>选择标题</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="例如：基础结构 + 单次 AI 检查"></div><div class="field"><label><span>事实与条件</span><small>必填 · 最多 150 字</small></label><textarea id="decision-facts" class="textarea" maxlength="150" placeholder="已经确定的信息，或这个选择成立的条件">${esc((d.facts||[]).join('\n') || d.note || '')}</textarea></div>${['costs','risks','returns'].map((key,i)=>`<div class="subform rated-subform"><div class="subform-limit-corner">${ratedLimitText(d[key])}</div><div class="subform-head"><div class="subform-title">${['成本','风险','回报'][i]}</div><button type="button" class="add-line" style="margin:0" onclick="App.addRated('${key}')">+ 添加</button></div><div class="subform-help">${['可能的付出、支出或牺牲','可能导致的不利后果或需要防范的问题','选择这条路径可能获得的收益'][i]}；添加后的每条内容至少填写 2 个字符。</div><div id="rows-${key}">${rateRows(key,d[key])}</div></div>`).join('')}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存选择</button></div></div></div>`;
+   return `<div class="mask"><div class="modal large branch-form"><h3>${edit?'编辑选择':'添加一个选择'}</h3><div class="form-guide">一个选择至少需要写下支撑它的事实或条件。事实与条件最多 150 字；成本、风险、回报每类最多 5 条，且每类内容合计最多 150 字。</div><div class="field"><label><span>选择标题</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="例如：基础结构 + 单次 AI 检查"></div><div class="field"><label><span>事实与条件</span><small>必填 · 最多 150 字</small></label><textarea id="decision-facts" class="textarea" maxlength="150" placeholder="已经确定的信息，或这个选择成立的条件">${esc((d.facts||[]).join('\n') || d.note || '')}</textarea></div>${['costs','risks','returns'].map((key,i)=>`<div class="subform rated-subform"><div class="subform-limit-corner">${ratedLimitText(d[key])}</div><div class="subform-head"><div class="subform-title">${['成本','风险','回报'][i]}</div><button type="button" class="add-line" style="margin:0" onclick="App.addRated('${key}')">+ 添加</button></div><div class="subform-help">${['可能的付出、支出或牺牲','可能导致的不利后果或需要防范的问题','选择这条路径可能获得的收益'][i]}</div><div id="rows-${key}">${rateRows(key,d[key])}</div></div>`).join('')}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存选择</button></div></div></div>`;
   }
   const d=thoughtData(data), mustSteps=(countNodes(p)>=30 && !edit);
-  return `<div class="mask"><div class="modal large branch-form"><h3>${overlay.fromStash?'继续整理暂存念头':(edit?'编辑念头':'添加一个延伸念头')}</h3>${overlay.fromStash&&overlay.stashNote?`<div class="form-guide">暂存时记录：${esc(overlay.stashNote)}</div>`:''}<div class="form-guide">每一条延伸念头都需要回到事实、推测和行动；各项内容最多 150 字。${mustSteps?'当前内容已经很多，这一条需要同时拆出行动步骤。':''}</div><div class="field"><label><span>当前念头</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="写下此刻继续冒出来的一句话"></div><div class="field"><label><span>我观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="thought-fact" class="textarea" maxlength="150" placeholder="只写已经观察到或确认的信息">${esc(d.fact||d.note||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="thought-subjective" class="textarea" maxlength="150" placeholder="哪些结论是我在情绪中继续推出来的？">${esc(d.subjective)}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="thought-action" class="textarea" maxlength="150" placeholder="写下一件能够改变现状或验证判断的事情">${esc(d.action)}</textarea></div><div class="subform"><div class="subform-head"><div class="subform-title">把行动拆成小步骤${mustSteps?'<span class="required">至少一步</span>':''}</div><button type="button" class="add-line" style="margin:0" onclick="App.addStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步；添加后的每一步至少填写 2 个字符。让行动门槛更低，而不是继续向坏处推演。</div><div id="step-list">${stepRows(d.steps)}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存念头</button></div></div></div>`;
+  return `<div class="mask"><div class="modal large branch-form"><h3>${overlay.fromStash?'继续整理暂存念头':(edit?'编辑念头':'添加一个延伸念头')}</h3>${overlay.fromStash&&overlay.stashNote?`<div class="form-guide">暂存时记录：${esc(overlay.stashNote)}</div>`:''}<div class="form-guide">每一条延伸念头都需要回到事实、推测和行动；各项内容最多 150 字。${mustSteps?'当前内容已经很多，这一条需要同时拆出行动步骤。':''}</div><div class="field"><label><span>当前念头</span><small>必填 · 最多 80 字</small></label><input id="branch-title" class="input" maxlength="80" value="${esc(d.title)}" placeholder="写下此刻继续冒出来的一句话"></div><div class="field"><label><span>我观察到的事实</span><small>必填 · 最多 150 字</small></label><textarea id="thought-fact" class="textarea" maxlength="150" placeholder="只写已经观察到或确认的信息">${esc(d.fact||d.note||'')}</textarea></div><div class="field"><label><span>我加入的推测或担忧</span><small>必填 · 最多 150 字</small></label><textarea id="thought-subjective" class="textarea" maxlength="150" placeholder="哪些结论是我在情绪中继续推出来的？">${esc(d.subjective)}</textarea></div><div class="field"><label><span>我现在能做什么</span><small>必填 · 最多 150 字</small></label><textarea id="thought-action" class="textarea" maxlength="150" placeholder="写下一件能够改变现状或验证判断的事情">${esc(d.action)}</textarea></div><div class="subform"><div class="subform-head"><div class="subform-title">把行动拆成小步骤${mustSteps?'<span class="required">至少一步</span>':''}</div><button type="button" class="add-line" style="margin:0" onclick="App.addStep()">+ 添加步骤</button></div><div class="subform-help">最多 5 步，让行动门槛更低，而不是继续向坏处推演。</div><div id="step-list">${stepRows(d.steps)}</div></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.saveBranch()">保存念头</button></div></div></div>`;
  }
  if(overlay.type==='actionGate'){
   return `<div class="mask"><div class="modal support-modal"><h3>先停一下，看看你现在更需要什么</h3><p>这条念头已经延伸出了不少方向。继续往下之前，你可以先试着找一个能开始的小行动；如果现在确实想不到，也可以先把状态稳住，再回来整理。</p><ul class="gate-list">${overlay.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><div class="modal-actions"><button class="btn btn-secondary" onclick="App.openSupportChoices()">我现在想不到办法</button><button class="btn btn-primary" onclick="App.openGateTarget()">我能先想一步</button></div></div></div>`;
@@ -1212,7 +1213,7 @@ function overlayHTML(){
  if(overlay.type==='deleteProject') return `<div class="mask"><div class="modal"><h3>删除这张思路图？</h3><p>删除后，这张思路图与其中的全部分支无法恢复。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-danger" onclick="App.doDeleteProject()">确认删除</button></div></div></div>`;
  if(overlay.type==='deleteAllProjects'){
   const graphName=modes[overlay.mode].name+'图';
-  if(overlay.step===1) return `<div class="mask"><div class="modal"><h3>删除全部${graphName}？</h3><p>将删除当前浏览器中保存的全部<strong>${graphName}</strong>，共 ${overlay.count} 张。</p><p>示例模板不受影响；另一类思路图也不会被删除。</p><div class="batch-danger-note">有需要保留的内容时，建议先逐张导出文字版，再进行批量删除。</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-danger" onclick="App.confirmDeleteAll()">继续删除</button></div></div></div>`;
+  if(overlay.step===1) return `<div class="mask"><div class="modal"><h3>删除全部${graphName}？</h3><p>将删除当前浏览器中保存的全部<strong>${graphName}</strong>，共 ${overlay.count} 张。</p><p>示例模板不受影响；另一类思路图也不会被删除。</p><div class="batch-danger-note">有需要保留的内容时，建议先逐张导出分享文字版或可导入数据包，再进行批量删除。</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-danger" onclick="App.confirmDeleteAll()">继续删除</button></div></div></div>`;
   return `<div class="mask"><div class="modal"><h3>确定删除全部${graphName}？</h3><p>即将删除 ${overlay.count} 张${graphName}。此操作不可逆，删除后无法恢复。</p><p>内置示例模板仍会保留。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">返回</button><button class="btn btn-danger" onclick="App.doDeleteAllProjects()">确定删除</button></div></div></div>`;
  }
  if(overlay.type==='limit'){
@@ -1221,14 +1222,18 @@ function overlayHTML(){
   const key=overlay.reason==='root'?'limitRoot':overlay.reason==='child'?'limitChild':overlay.reason==='depth'?'limitDepth':'limitTotal';
   return `<div class="mask"><div class="modal"><h3>${heading}</h3><p>${m[key]}</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">${isTotal&&project().mode==='decision'?'我再看看':'好的'}</button>${isTotal&&project().mode==='decision'?`<button class="btn btn-primary" onclick="App.branchAsNew('${overlay.parentId}')">以此分支新建思路图</button>`:''}${isTotal&&project().mode==='thought'?`<button class="btn btn-primary" onclick="App.convertDecision()">切换到决策推演</button>`:''}</div></div></div>`;
  }
- if(overlay.type==='export') return `<div class="mask"><div class="modal large"><h3>${overlay.title}</h3><textarea id="exportBox" class="export-area" readonly>${esc(overlay.text)}</textarea><p class="modal-note">完整复制后，可通过“导入文字版”重新创建为可编辑图，用于设备间迁移或自愿分享。<br>若复制失败，可以点击上方文本框手动全选复制。</p><div class="disclaimer">工具仅承载用户输入内容，不审核或对具体内容负责。请勿传播违法、有害或侵害他人权益的信息。</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">关闭</button><button class="btn btn-primary" onclick="App.copyExport()">复制文本</button></div></div></div>`;
- if(overlay.type==='import') return `<div class="mask"><div class="modal large"><h3>导入文字版思路图</h3><p>粘贴由本工具导出的完整标准文字版，校验通过后将创建一张新的可编辑图。</p><textarea id="importBox" class="import-area" placeholder="在这里粘贴完整的思路图纯文字版……">${esc(overlay.draft||'')}</textarea><button class="help-link" onclick="App.openImportRules()">ⓘ 查看导入规则与常见错误</button><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-primary" onclick="App.importText()">校验并导入</button></div></div></div>`;
- if(overlay.type==='importRules') return `<div class="mask"><div class="modal large"><h3>导入规则与使用说明</h3><div class="rule-card"><h4>适合用来做什么</h4><p>文字版用于在设备之间迁移思路图，或在双方知情的情况下分享一张已整理好的图，让接收者继续编辑。</p></div><div class="rule-card"><h4>系统会检查什么</h4><ul><li>必须保留由本工具导出的标准数据段；普通文章或自行拼接内容不能直接导入。</li><li>标题最多 80 字；决策起点的“已知背景”“目标或约束”，以及念头起点的“实际观察到的事实”“我加入的推测或担忧”，最多 300 字。</li><li>念头起点的“我现在能做什么”，以及分支中的事实、描述、推测与行动方向，最多 150 字；行动小步骤最多 100 字。</li><li>决策图中的成本、风险、回报每类最多 5 条，每一类的全部内容合计最多 150 字。</li><li>必填内容至少填写 2 个字符，不能只填写数字、符号或其他无法表达实际含义的占位内容。</li><li>最多 5 个层级；同一上级分支最多延伸 3 条；整张图最多 39 条分支。</li><li>念头整理图仍需满足行动补充规则，不能通过导入绕开。</li></ul></div><div class="rule-card"><h4>为什么设置拦截</h4><p>这是一个本地轻工具。限制结构与篇幅，是为了保持页面可读、避免导入后显示混乱，并为完整版的分析能力保留稳定的内容范围。本工具不审核用户输入内容，请勿传播违法、有害或侵害他人权益的信息。</p></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.backToImport()">返回导入</button></div></div></div>`;
- if(overlay.type==='importError') return `<div class="mask"><div class="modal"><h3>${overlay.format?'无法识别文字版格式':'暂时无法导入这张思路图'}</h3>${overlay.format?`<p>请粘贴由本工具导出的完整标准文字版，并保留其中的数据段。自行改写或缺少数据段时，系统无法可靠还原结构。</p>`:`<p>发现一项主要的${overlay.category}问题：</p><div class="error-highlight">${esc(overlay.primary)}</div>${overlay.more?`<p class="modal-note">另外还有 ${overlay.more} 项不符合规则。建议先在原图中修改后重新导出，而不是手动绕过限制。</p>`:''}`}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.openImportRules()">查看规则</button><button class="btn btn-primary" onclick="App.backToImport()">返回修改</button></div></div></div>`;
+ if(overlay.type==='exportChoice') return `<div class="mask"><div class="modal large"><h3>${overlay.scope==='path'?'导出当前路径':'导出整张思路图'}</h3><p>你想怎样使用这份内容？阅读分享与重新导入使用不同格式，可以避免同一份思路内容被重复导出两次。</p><div class="mode-choice"><button class="choose" onclick="App.chooseExport('share')"><strong>分享文字版</strong><span>适合发给他人阅读，或自己保存浏览。不包含可重新导入的数据。</span></button><button class="choose" onclick="App.chooseExport('package')"><strong>可导入数据包</strong><span>适合跨设备、跨浏览器迁移，或交给他人导入为可编辑图。</span></button></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button></div></div></div>`;
+ if(overlay.type==='export'){
+  const isPackage=overlay.kind==='package';
+  return `<div class="mask"><div class="modal large"><h3>${overlay.title}</h3><textarea id="exportBox" class="export-area" readonly>${esc(overlay.text)}</textarea><p class="modal-note">${isPackage?'此数据包可通过“导入数据包”恢复为新的可编辑图。适合迁移或在双方知情的情况下分享导入。':'此分享文字版适合阅读、保存或转发，不包含可以重新导入的结构数据。'}<br>若复制失败，可以点击上方文本框手动全选复制；也可以直接下载 TXT 文件。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">关闭</button><button class="btn btn-secondary" onclick="App.downloadExport()">下载 TXT</button><button class="btn btn-primary" onclick="App.copyExport()">${isPackage?'复制数据包':'复制文字'}</button></div></div></div>`;
+ }
+ if(overlay.type==='import') return `<div class="mask"><div class="modal large"><h3>导入思路图数据包</h3><p>你可以粘贴由本工具导出的“可导入数据包”，也可以直接选择 TXT 数据包文件。校验通过后，将创建一张新的可编辑图。</p><textarea id="importBox" class="import-area" placeholder="在这里粘贴可导入数据包中的完整内容……">${esc(overlay.draft||'')}</textarea><input id="importTxtInput" class="file-input-hidden" type="file" accept=".txt,text/plain" onchange="App.handleImportTxt(event)"><button class="help-link" onclick="App.openImportRules()">ⓘ 查看导入规则与常见错误</button><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">取消</button><button class="btn btn-secondary" onclick="App.pickImportTxt()">导入 TXT</button><button class="btn btn-primary" onclick="App.importText()">校验并导入</button></div></div></div>`;
+ if(overlay.type==='importRules') return `<div class="mask"><div class="modal large"><h3>导入规则与使用说明</h3><div class="rule-card"><h4>两种导出格式的区别</h4><p>“分享文字版”适合阅读与转发，不包含结构数据，不能重新导入。“可导入数据包”用于设备间迁移或继续编辑，可以复制粘贴，也可以下载为 TXT 文件后直接导入。</p></div><div class="rule-card"><h4>系统会检查什么</h4><ul><li>粘贴或上传的内容必须保留由本工具导出的标准数据段；分享文字版、普通文章或自行拼接内容不能直接导入。</li><li>上传导入时只接受 .txt 格式的数据包文件；文件内容仍会经过与粘贴导入相同的校验。</li><li>标题最多 80 字；决策起点的“已知背景”“目标或约束”，以及念头起点的“实际观察到的事实”“我加入的推测或担忧”，最多 300 字。</li><li>念头起点的“我现在能做什么”，以及分支中的事实、描述、推测与行动方向，最多 150 字；行动小步骤最多 100 字。</li><li>决策图中的成本、风险、回报每类最多 5 条，每一类的全部内容合计最多 150 字。</li><li>必填内容至少填写 2 个字符，不能只填写数字、符号或其他无法表达实际含义的占位内容。</li><li>最多 5 个层级；同一上级分支最多延伸 3 条；整张图最多 39 条分支。</li><li>念头整理图仍需满足行动补充规则，不能通过导入绕开。</li></ul></div><div class="rule-card"><h4>为什么设置拦截</h4><p>这是一个本地轻工具。限制结构与篇幅，是为了保持页面可读、避免导入后显示混乱，并为完整版的分析能力保留稳定的内容范围。本工具不审核用户输入内容，请勿传播违法、有害或侵害他人权益的信息。</p></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.backToImport()">返回导入</button></div></div></div>`;
+ if(overlay.type==='importError') return `<div class="mask"><div class="modal"><h3>${overlay.format?'无法识别文字版格式':'暂时无法导入这张思路图'}</h3>${overlay.format?`<p>请粘贴或上传由本工具导出的完整“可导入数据包”，并保留其中的数据段。分享文字版、自行改写内容或缺少数据段时，系统无法可靠还原结构。</p>`:`<p>发现一项主要的${overlay.category}问题：</p><div class="error-highlight">${esc(overlay.primary)}</div>${overlay.more?`<p class="modal-note">另外还有 ${overlay.more} 项不符合规则。建议先在原图中修改后重新导出，而不是手动绕过限制。</p>`:''}`}<div class="modal-actions"><button class="btn btn-secondary" onclick="App.openImportRules()">查看规则</button><button class="btn btn-primary" onclick="App.backToImport()">返回修改</button></div></div></div>`;
  if(overlay.type==='aiInfo') return `<div class="mask"><div class="modal"><h3>AI 分析师</h3><p>当前基础版本不支持 AI 分析功能。该功能仅在完整版中接入。</p><div class="modal-actions"><button class="btn btn-primary" onclick="App.close()">知道了</button></div></div></div>`;
- if(overlay.type==='versions'){const p=project(),items=(p.versions||[]);return `<div class="mask"><div class="modal large"><h3>历史版本</h3><p>这里只保存你手动记录的版本。恢复后会覆盖当前内容，已有版本仍会保留。</p><div class="version-help">点击版本备注名称即可修改。复制后可通过“导入文字版”创建一张新图。</div>${items.length?`<div class="versions">${items.slice().reverse().map(v=>`<div class="version-row"><div><div class="version-name-row"><button class="version-note-btn" onclick="App.editVersionNote('${v.versionId}')">${esc(App.versionLabel(v))}</button></div><span>${nowText(v.savedAt)}</span></div><div class="version-actions"><button class="version-action" onclick="App.copyVersionText('${v.versionId}')">复制</button><button class="version-action" onclick="App.askRestoreVersion('${v.versionId}')">恢复</button><button class="version-action danger" onclick="App.askDeleteVersion('${v.versionId}')">删除</button></div></div>`).join('')}</div>`:`<div class="empty">还没有手动保存的版本。</div>`}<p class="modal-note">每张图最多保留最近 20 个手动版本。</p><div class="modal-actions versions-footer">${overlay.copyHelp?`<div class="version-copy-tip">若复制“${esc(overlay.copyHelp.label)}”失败，可以点击 <button onclick="App.openVersionText()">查看文本框</button> 手动复制。</div>`:'<span></span>'}<button class="btn btn-secondary" onclick="App.close()">关闭</button></div></div></div>`}
+ if(overlay.type==='versions'){const p=project(),items=(p.versions||[]);return `<div class="mask"><div class="modal large"><h3>历史版本</h3><p>这里只保存你手动记录的版本。恢复后会覆盖当前内容，已有版本仍会保留。</p><div class="version-help">点击版本备注名称即可修改。复制的数据包可通过“导入数据包”创建一张新图。</div>${items.length?`<div class="versions">${items.slice().reverse().map(v=>`<div class="version-row"><div><div class="version-name-row"><button class="version-note-btn" onclick="App.editVersionNote('${v.versionId}')">${esc(App.versionLabel(v))}</button></div><span>${nowText(v.savedAt)}</span></div><div class="version-actions"><button class="version-action" onclick="App.copyVersionText('${v.versionId}')">复制数据包</button><button class="version-action" onclick="App.askRestoreVersion('${v.versionId}')">恢复</button><button class="version-action danger" onclick="App.askDeleteVersion('${v.versionId}')">删除</button></div></div>`).join('')}</div>`:`<div class="empty">还没有手动保存的版本。</div>`}<p class="modal-note">每张图最多保留最近 20 个手动版本。</p><div class="modal-actions versions-footer">${overlay.copyHelp?`<div class="version-copy-tip">若复制“${esc(overlay.copyHelp.label)}”失败，可点击 <button onclick="App.openVersionText()">查看其他复制方式</button>，手动复制或下载 TXT 文件。</div>`:'<span></span>'}<button class="btn btn-secondary" onclick="App.close()">关闭</button></div></div></div>`}
  if(overlay.type==='childList'){const p=project(),found=nodeAt(p.nodes,overlay.nodeId),children=found?.node?.children||[];return `<div class="mask"><div class="modal"><h3>下级分支</h3><p>以下是这一分支的下级分支。选择一条即可前往查看。</p><div class="child-items">${children.map(child=>`<div class="child-item"><div class="child-item-title">${p.mode==='thought'?'“'+esc(child.title)+'”':esc(child.title)}${child.isStash?'　<span class="stash-label" style="margin:0">暂存</span>':''}</div><button class="child-go" onclick="App.goChild('${child.id}')">前往该下级分支 →</button></div>`).join('')}</div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.close()">返回</button></div></div></div>`}
- if(overlay.type==='versionText') return `<div class="mask"><div class="modal large"><h3>复制历史版本文字版</h3><p>点击下方文本框，手动全选并复制。</p><textarea id="versionTextBox" class="export-area" readonly>${esc(overlay.text)}</textarea><div class="modal-actions"><button class="btn btn-secondary" onclick="App.backToVersions()">关闭</button></div></div></div>`;
+ if(overlay.type==='versionText') return `<div class="mask"><div class="modal large"><h3>历史版本 · 其他复制方式</h3><p>这是可重新导入的数据包。你可以点击文本框手动全选复制，或下载为 TXT 文件后迁移到其他设备。</p><textarea id="versionTextBox" class="export-area" readonly>${esc(overlay.text)}</textarea><div class="modal-actions"><button class="btn btn-secondary" onclick="App.backToVersions()">返回历史版本</button><button class="btn btn-secondary" onclick="App.downloadVersionText()">下载 TXT</button></div></div></div>`;
  if(overlay.type==='editVersionNote'){const v=(project().versions||[]).find(x=>x.versionId===overlay.versionId);return `<div class="mask"><div class="modal"><h3>修改版本备注</h3><div class="field"><label>版本备注<small>可选 · 最多 30 字</small></label><input id="version-note" class="input" maxlength="30" value="${esc(v?.note||'')}" placeholder="例如：先保留 AI 检查路径"></div><div class="modal-actions"><button class="btn btn-secondary" onclick="App.openVersions()">取消</button><button class="btn btn-primary" onclick="App.saveVersionNote('${overlay.versionId}')">保存备注</button></div></div></div>`}
  if(overlay.type==='deleteVersion'){const v=(project().versions||[]).find(x=>x.versionId===overlay.versionId);return `<div class="mask"><div class="modal"><h3>删除这个历史版本？</h3><p>将删除“${esc(App.versionLabel(v))}”这一份备份。当前思路图和其他历史版本不会受到影响。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.openVersions()">取消</button><button class="btn btn-danger" onclick="App.doDeleteVersion('${overlay.versionId}')">确认删除</button></div></div></div>`}
  if(overlay.type==='restoreVersion') return `<div class="mask"><div class="modal"><h3>恢复这个版本？</h3><p>当前未手动保存的编辑内容会被覆盖。恢复后，你仍可以继续编辑或再次保存新版本。</p><div class="modal-actions"><button class="btn btn-secondary" onclick="App.openVersions()">取消</button><button class="btn btn-primary" onclick="App.doRestoreVersion('${overlay.versionId}')">确认恢复</button></div></div></div>`;
@@ -1238,19 +1243,6 @@ function renderOverlay(){
  const root=document.getElementById('modal');
  root.className=theme();
  root.innerHTML=overlayHTML();
-}
-function renderOverlayPreservePosition(){
- const currentModal=document.querySelector('#modal .modal');
- const modalScrollTop=currentModal?.scrollTop||0;
- const modalScrollLeft=currentModal?.scrollLeft||0;
- const pageX=window.scrollX,pageY=window.scrollY;
- renderOverlay();
- const nextModal=document.querySelector('#modal .modal');
- if(nextModal){
-  nextModal.scrollTop=modalScrollTop;
-  nextModal.scrollLeft=modalScrollLeft;
- }
- if(window.scrollX!==pageX||window.scrollY!==pageY)window.scrollTo(pageX,pageY);
 }
 function touch(p,msg){p.updatedAt=Date.now();saveStore();render();if(msg)notify(msg)}
 function rootToText(p){
@@ -1313,21 +1305,40 @@ function pathNodesClone(p,nodeId){
  });
  return root?[root]:[];
 }
-function withImportBlock(readable,data){
+function shareReadableText(readable){
  return `${readable}
 
 【分享与内容说明】
-此文字版用于保存、迁移或分享思路结构。工具仅承载用户输入内容，不审核或对具体内容负责；请勿传播违法、有害或侵害他人权益的信息。
+此分享文字版用于阅读、保存或分享思路结构，不包含可重新导入的数据。工具仅承载用户输入内容，不审核或对具体内容负责；请勿传播违法、有害或侵害他人权益的信息。`;
+}
+function importPackageText(data){
+ return `【思路图数据包｜可导入数据包 v1】
 
-====================
-【可导入数据｜思路图纯文字版 v1】
+【导入与内容说明】
+本数据包用于在「思路图」中恢复可编辑结构，适合设备间迁移，或在双方知情的情况下分享给他人导入。
+工具仅承载用户输入内容，不审核或对具体内容负责；请勿传播违法、有害或侵害他人权益的信息。
+
 [SILUOTU_DATA_BEGIN]
 ${JSON.stringify(data,null,2)}
 [SILUOTU_DATA_END]`;
 }
+function safeFilePart(value){
+ return String(value||'未命名').replace(/[\\/:*?"<>|\r\n]+/g,'_').replace(/\s+/g,' ').trim().slice(0,34)||'未命名';
+}
+function downloadTextFile(text,filename){
+ const blob=new Blob([String(text||'')],{type:'text/plain;charset=utf-8'});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement('a');
+ link.href=url;
+ link.download=filename;
+ document.body.appendChild(link);
+ link.click();
+ link.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
 function extractImportedData(text){
  const match=String(text||'').match(/\[SILUOTU_DATA_BEGIN\]\s*([\s\S]*?)\s*\[SILUOTU_DATA_END\]/);
- if(!match)throw new Error('未识别到标准格式。请粘贴由本工具导出的完整文字版内容。');
+ if(!match)throw new Error('未识别到标准格式。请粘贴或上传由本工具导出的完整可导入数据包内容。');
  try{return JSON.parse(match[1])}catch(e){throw new Error('导入数据格式损坏，无法解析。')}
 }
 function validateImportedGraph(data){
@@ -1336,10 +1347,10 @@ function validateImportedGraph(data){
  const hasStep=(item)=>Array.isArray(item?.steps)&&item.steps.some(x=>String(x||'').trim());
  if(!data || !['decision','thought'].includes(data.mode))errors.push('图类型无法识别');
  text(data?.title,80,'起点标题',true);
- text(data?.context,300,data?.mode==='thought'?'起点事实':'起点背景',data?.mode==='thought');
- text(data?.goal,data?.mode==='thought'?150:300,data?.mode==='thought'?'起点行动':'起点目标',data?.mode==='thought');
+ text(data?.context,150,data?.mode==='thought'?'起点事实':'起点背景',data?.mode==='thought');
+ text(data?.goal,150,data?.mode==='thought'?'起点行动':'起点目标',data?.mode==='thought');
  if(data?.mode==='thought'){
-  text(data.subjective,300,'起点推测或担忧',true);
+  text(data.subjective,150,'起点推测或担忧',true);
   if((data.steps||[]).length>5)errors.push('核心念头的行动步骤最多 5 条');
   (data.steps||[]).forEach((x,i)=>text(x,100,`核心念头行动步骤 ${i+1}`,true));
  }
@@ -1519,9 +1530,9 @@ window.App={
   const title=document.getElementById('create-title').value.trim(),context=document.getElementById('create-context').value.trim(),goal=document.getElementById('create-goal').value.trim();
   const subjective=isThought?(document.getElementById('create-subjective')?.value||'').trim():'';
   let err=contentError(title,'起点标题',true,80)
-   ||contentError(context,isThought?'实际观察到的事实':'已知背景',isThought,300)
-   ||(isThought?contentError(subjective,'推测或担忧',true,300):'')
-   ||contentError(goal,isThought?'行动方向':'目标或约束',isThought,isThought?150:300);
+   ||contentError(context,isThought?'实际观察到的事实':'已知背景',isThought,150)
+   ||(isThought?contentError(subjective,'推测或担忧',true,150):'')
+   ||contentError(goal,isThought?'行动方向':'目标或约束',isThought,150);
   if(err){notify(err);return}
   const p={id:id('p'),mode:creationMode,title,context,goal,subjective,steps:[],nodes:[],createdAt:Date.now(),updatedAt:Date.now(),versions:[]};
   addUserProjectAtTop(p);saveStore();currentId=p.id;level=1;page='editor';render();window.scrollTo(0,0);notify('已创建思路图');
@@ -1773,46 +1784,13 @@ window.App={
   container.push(node);overlay=null;touch(p,'已暂存这条念头');
  },
  addRated(kind){
-  captureBranchDraft();
-  const arr=overlay.data[kind]||[];
-  const label={costs:'成本',risks:'风险',returns:'回报'}[kind]||'内容';
-  const current=arr[arr.length-1];
-  const currentText=String(current?.text||'').trim();
-  if(!currentText){notify(`请先填写当前${label}内容，再添加下一条`);return}
-  const err=contentError(currentText,label,true,150);
-  if(err){notify(err);return}
+  captureBranchDraft();const arr=overlay.data[kind]||[];
   if(arr.length>=5){notify('每一类最多添加 5 条');return}
-  if(ratedTotal(arr)>=150){notify(`${label}内容已达到 150 字上限`);return}
-  arr.push({certainty:'中等可能',text:''});
-  overlay.data[kind]=arr;
-  renderOverlayPreservePosition();
+  arr.push({certainty:'中等可能',text:''});overlay.data[kind]=arr;renderOverlay();
  },
- removeRated(kind,index){
-  captureBranchDraft();
-  const arr=overlay.data[kind]||[];
-  arr.splice(index,1);
-  overlay.data[kind]=arr;
-  renderOverlayPreservePosition();
- },
- addStep(){
-  captureBranchDraft();
-  const arr=overlay.data.steps||[];
-  const currentText=String(arr[arr.length-1]||'').trim();
-  if(!currentText){notify('请先填写当前行动步骤，再添加下一步');return}
-  const err=contentError(currentText,'行动步骤',true,100);
-  if(err){notify(err);return}
-  if(arr.length>=5){notify('行动最多拆成 5 步');return}
-  arr.push('');
-  overlay.data.steps=arr;
-  renderOverlayPreservePosition();
- },
- removeStep(index){
-  captureBranchDraft();
-  const arr=overlay.data.steps||[];
-  arr.splice(index,1);
-  overlay.data.steps=arr;
-  renderOverlayPreservePosition();
- },
+ removeRated(kind,index){captureBranchDraft();const arr=overlay.data[kind]||[];arr.splice(index,1);overlay.data[kind]=arr;renderOverlay()},
+ addStep(){captureBranchDraft();const arr=overlay.data.steps||[];if(arr.length>=5){notify('行动最多拆成 5 步');return}arr.push('');overlay.data.steps=arr;renderOverlay()},
+ removeStep(index){captureBranchDraft();const arr=overlay.data.steps||[];arr.splice(index,1);overlay.data.steps=arr;renderOverlay()},
  captureRootDraft(){
   if(!overlay||overlay.type!=='root')return;
   const p=project(),draft=overlay.draft||{};
@@ -1827,20 +1805,16 @@ window.App={
  addRootStep(){
   this.captureRootDraft();
   const values=overlay.draft.steps||[];
-  const currentText=String(values[values.length-1]||'').trim();
-  if(!currentText){notify('请先填写当前行动步骤，再添加下一步');return}
-  const err=contentError(currentText,'行动步骤',true,100);
-  if(err){notify(err);return}
   if(values.length>=5){notify('行动最多拆成 5 步');return}
   overlay.draft.steps=values.concat('');
-  renderOverlayPreservePosition();
+  renderOverlay();
  },
  removeRootStep(index){
   this.captureRootDraft();
   const values=[...(overlay.draft.steps||[])];
   values.splice(index,1);
   overlay.draft.steps=values;
-  renderOverlayPreservePosition();
+  renderOverlay();
  },
  openGateTarget(){
   const target=overlay.gate==='root'?null:overlay.targetId;
@@ -1869,14 +1843,35 @@ window.App={
   overlay={type:'importRules',draft};renderOverlay();
  },
  backToImport(){const draft=overlay?.draft||'';overlay={type:'import',draft};renderOverlay()},
- importText(){
-  const raw=document.getElementById('importBox').value;
+ pickImportTxt(){document.getElementById('importTxtInput')?.click()},
+ handleImportTxt(event){
+  const input=event?.target, file=input?.files?.[0];
+  if(!file)return;
+  if(!/\.txt$/i.test(file.name)){
+   notify('仅支持导入 TXT 格式的数据包文件');
+   input.value='';
+   return;
+  }
+  const reader=new FileReader();
+  reader.onload=()=>{
+   const raw=String(reader.result||'');
+   if(!raw.trim()){notify('TXT 文件内容为空，无法导入');input.value='';return}
+   this.importRawDataPackage(raw);
+  };
+  reader.onerror=()=>{notify('TXT 文件读取失败，请重试');input.value=''};
+  reader.readAsText(file,'utf-8');
+ },
+ importRawDataPackage(raw){
   try{
    const data=extractImportedData(raw),errors=validateImportedGraph(data);
    if(errors.length){const info=importErrorCategory(errors);overlay={type:'importError',draft:raw,category:info.kind,primary:info.primary,more:errors.length-1};renderOverlay();return}
    const p=importedProject(data);
    addUserProjectAtTop(p);saveStore();homeMode=p.mode;currentId=p.id;page='editor';level=1;expandedCards=new Set();overlay=null;render();window.scrollTo(0,0);notify('已导入为可编辑思路图');
   }catch(e){overlay={type:'importError',format:true,draft:raw};renderOverlay()}
+ },
+ importText(){
+  const raw=document.getElementById('importBox').value;
+  this.importRawDataPackage(raw);
  },
  saveVersion(){
   const p=project();p.versions=Array.isArray(p.versions)?p.versions:[];
@@ -1888,11 +1883,12 @@ window.App={
  versionLabel(v){return String(v?.note||'').trim()||'手动保存版本'},
  copyVersionLabel(v){return String(v?.note||'').trim()||nowText(v.savedAt)},
  openVersions(){overlay={type:'versions'};renderOverlay()},
- openVersionText(){if(!overlay.copyHelp)return;overlay={type:'versionText',text:overlay.copyHelp.text,label:overlay.copyHelp.label};renderOverlay()},
- backToVersions(){const keep={text:overlay.text,label:overlay.label};overlay={type:'versions',copyHelp:keep};renderOverlay()},
+ openVersionText(){if(!overlay.copyHelp)return;overlay={type:'versionText',text:overlay.copyHelp.text,label:overlay.copyHelp.label,filename:overlay.copyHelp.filename};renderOverlay()},
+ backToVersions(){const keep={text:overlay.text,label:overlay.label,filename:overlay.filename};overlay={type:'versions',copyHelp:keep};renderOverlay()},
+ downloadVersionText(){if(!overlay?.text)return;downloadTextFile(overlay.text,overlay.filename||'思路图_历史版本_可导入数据包.txt');notify('已开始下载 TXT 数据包')},
  editVersionNote(versionId){overlay={type:'editVersionNote',versionId};renderOverlay()},
  saveVersionNote(versionId){const p=project(),v=(p.versions||[]).find(x=>x.versionId===versionId);if(!v){notify('未找到该历史版本');return}v.note=document.getElementById('version-note').value.trim().slice(0,30);saveStore();overlay={type:'versions'};renderOverlay();notify('已更新版本备注')},
- copyVersionText(versionId){const v=(project().versions||[]).find(x=>x.versionId===versionId);if(!v){notify('未找到该历史版本');return}const text=withImportBlock(fullText(v.data),cleanExportGraph(v.data));const label=this.copyVersionLabel(v);overlay={type:'versions',copyHelp:{text,label}};renderOverlay();attemptCopyText(text,`已复制“${label}”的文字版思路图`)},
+ copyVersionText(versionId){const p=project(),v=(p.versions||[]).find(x=>x.versionId===versionId);if(!v){notify('未找到该历史版本');return}const text=importPackageText(cleanExportGraph(v.data));const label=this.copyVersionLabel(v);const filename=`思路图_${modes[p.mode].name}_${safeFilePart(p.title)}_${safeFilePart(label)}_可导入数据包.txt`;overlay={type:'versions',copyHelp:{text,label,filename}};renderOverlay();attemptCopyText(text,`已复制“${label}”的数据包`)},
  askDeleteVersion(versionId){overlay={type:'deleteVersion',versionId};renderOverlay()},
  doDeleteVersion(versionId){const p=project();p.versions=(p.versions||[]).filter(v=>v.versionId!==versionId);saveStore();overlay={type:'versions'};renderOverlay();notify('已删除这一份历史版本')},
  askRestoreVersion(versionId){overlay={type:'restoreVersion',versionId};renderOverlay()},
@@ -1904,9 +1900,23 @@ window.App={
   saveStore();overlay=null;level=1;expandedCards=new Set();render();notify('已恢复历史版本');
  },
  cloneProject(projectId){const source=projects.find(item=>item.id===projectId);if(!source){notify('未找到要复制的思路图');return}const copy=JSON.parse(JSON.stringify(source));copy.id=id('p');copy.isTemplate=false;copy.versions=[];delete copy.templateMeta;delete copy.credit;copy.title=('拷贝·'+source.title).slice(0,80);copy.nodes=reIdNodes(copy.nodes||[]);copy.createdAt=Date.now();copy.updatedAt=Date.now();addUserProjectAtTop(copy);saveStore();homeMode=copy.mode;render();notify('已创建思路图副本')},
- exportFull(){const p=project();overlay={type:'export',title:'导出整张思路图',text:withImportBlock(fullText(p),cleanExportGraph(p))};renderOverlay()},
- exportPath(nodeId){const p=project(),nodes=pathNodesClone(p,nodeId);overlay={type:'export',title:'导出当前路径',text:withImportBlock(pathText(p,nodeId),cleanExportGraph(p,nodes))};renderOverlay()},
- copyExport(){const b=document.getElementById('exportBox');attemptCopyText(b.value,'文本已复制')},
+ exportFull(){overlay={type:'exportChoice',scope:'full',nodeId:null};renderOverlay()},
+ exportPath(nodeId){overlay={type:'exportChoice',scope:'path',nodeId};renderOverlay()},
+ chooseExport(kind){
+  if(!overlay||overlay.type!=='exportChoice'||!['share','package'].includes(kind))return;
+  const p=project(),scope=overlay.scope,nodeId=overlay.nodeId;
+  const isPath=scope==='path';
+  const readable=isPath?pathText(p,nodeId):fullText(p);
+  const data=isPath?cleanExportGraph(p,pathNodesClone(p,nodeId)):cleanExportGraph(p);
+  const kindLabel=kind==='share'?'分享文字版':'可导入数据包';
+  const scopeLabel=isPath?'当前路径':'整张思路图';
+  const text=kind==='share'?shareReadableText(readable):importPackageText(data);
+  const filename=`思路图_${modes[p.mode].name}_${safeFilePart(p.title)}_${isPath?'当前路径_':''}${kindLabel}.txt`;
+  overlay={type:'export',kind,title:`${scopeLabel} · ${kindLabel}`,text,filename};
+  renderOverlay();
+ },
+ copyExport(){const b=document.getElementById('exportBox');attemptCopyText(b.value,overlay?.kind==='package'?'数据包已复制':'文字已复制')},
+ downloadExport(){if(!overlay?.text)return;downloadTextFile(overlay.text,overlay.filename||'思路图导出.txt');notify('已开始下载 TXT 文件')},
  branchAsNew(nodeId){
   const old=project(),f=nodeId?nodeAt(old.nodes,nodeId):null,n=f?.node||null;
   const p={id:id('p'),mode:'decision',title:n?.title||old.title,context:n?((n.facts||[]).join('；')||n.note||''):(old.context||''),goal:'从原思路图的某条分支继续分析。',nodes:n?JSON.parse(JSON.stringify(n.children||[])):[],createdAt:Date.now(),updatedAt:Date.now()};
