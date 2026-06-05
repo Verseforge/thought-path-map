@@ -883,7 +883,7 @@ function ensureTemplates(list){
    changed=true;
   }
  });
- if(changed)localStorage.setItem(STORAGE,JSON.stringify(list));
+ if(changed)safeLocalStorageSet(STORAGE,JSON.stringify(list),'思路图');
  return list;
 }
 function resetTemplateById(templateId){
@@ -907,15 +907,28 @@ function normalizeStoredProjectOrder(list){
   const users=list.filter(item=>!item.isTemplate).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
   const templates=list.filter(item=>item.isTemplate);
   list=[...users,...templates];
-  localStorage.setItem(STORAGE_ORDER_MIGRATION,'done');
+  safeLocalStorageSet(STORAGE_ORDER_MIGRATION,'done','思路图排序标记');
   changed=true;
  }
- if(changed)localStorage.setItem(STORAGE,JSON.stringify(list));
+ if(changed)safeLocalStorageSet(STORAGE,JSON.stringify(list),'思路图');
  return list;
 }
 let projects=normalizeStoredProjectOrder(ensureTemplates(readStore())), page='home', homeMode=null, creationMode='decision', libraryMode='decision', currentId=null, level=1;
+function safeLocalStorageSet(key,value,label='数据'){
+ try{
+  localStorage.setItem(key,value);
+  if(localStorage.getItem(key)!==value){
+   notify(`${label}可能未能保存，请检查浏览器存储权限。`);
+   return false;
+  }
+  return true;
+ }catch(e){
+  notify(`${label}未能保存，可能是浏览器存储空间不足。请导出重要内容后，清理旧图、旧报告或浏览器缓存。`);
+  return false;
+ }
+}
 function readAIReports(){try{return JSON.parse(localStorage.getItem(AI_REPORT_STORAGE)||'[]')}catch(e){return []}}
-function saveAIReports(){localStorage.setItem(AI_REPORT_STORAGE,JSON.stringify(aiReports))}
+function saveAIReports(){return safeLocalStorageSet(AI_REPORT_STORAGE,JSON.stringify(aiReports),'历史报告')}
 let aiReports=readAIReports(), aiView='start', aiDetailsOpen=false, reportMode='decision', reportView='list', activeReportId=null, reportReturn='home', aiConfigDraft={provider:'deepseek',baseUrl:'https://api.deepseek.com',apiPath:'/chat/completions',model:'deepseek-v4-flash'};
 let aiSessionKey='', aiKeyVisible=false, aiConsentAcknowledged=false, aiConnection={state:'idle',message:'尚未测试连接。'}, aiConnectionController=null, aiAnalysisController=null, aiAnalysisError='', aiPreflight=null, aiPreflightDebug=null, aiLoadingPhase='idle';
 let overlay=null, pendingDelete=null, typingTimer=null, spotlightId=null, previewTimers=[], brandMenuOpen=false, historyHintTimer=null, historyHintObserver=null, previewTapAt=0, projectDrag=null, aiPreviewTimer=null;
@@ -929,10 +942,13 @@ let locatorExitFromCollapsed=false;
 let locatorAnimTimer=null;
 let locatorAnimTimer2=null;
 
-function id(prefix='x'){return prefix+'_'+Date.now()+'_'+Math.floor(Math.random()*100000)}
+function id(prefix='x'){
+ if(window.crypto?.randomUUID)return prefix+'_'+crypto.randomUUID().replace(/-/g,'');
+ return prefix+'_'+Date.now()+'_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
+}
 function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function readStore(){try{return JSON.parse(localStorage.getItem(STORAGE)||'[]')}catch(e){return []}}
-function saveStore(){localStorage.setItem(STORAGE,JSON.stringify(projects))}
+function saveStore(){return safeLocalStorageSet(STORAGE,JSON.stringify(projects),'思路图')}
 function addUserProjectAtTop(item){
  projects=projects.filter(existing=>existing.id!==item.id);
  projects.unshift(item);
@@ -1217,7 +1233,16 @@ function checkRootContent(p,title,context,goal,subjective='',steps=[]){
 function actionStepsFilled(n){return Array.isArray(n.steps)&&n.steps.some(x=>String(x||'').trim())}
 function isStash(n){return !!n?.isStash}
 function countStashes(p){return allNodes(p.nodes,[]).filter(n=>isStash(n)).length}
-function branchContainer(p,parentId){return parentId?nodeAt(p.nodes,parentId).node.children:p.nodes}
+function branchContainer(p,parentId){
+ if(!parentId)return p.nodes;
+ const found=nodeAt(p.nodes,parentId);
+ if(!found||!found.node){
+  notify('目标分支已不存在，请返回当前层级后重试。');
+  return p.nodes;
+ }
+ if(!Array.isArray(found.node.children))found.node.children=[];
+ return found.node.children;
+}
 function collectPathNodes(p,nodeId){function seek(nodes,target,trail=[]){for(const n of nodes){if(n.id===target)return trail.concat(n);const got=seek(n.children||[],target,trail.concat(n));if(got)return got}return null}return nodeId?(seek(p.nodes,nodeId,[])||[]):[]}
 function structuredList(items){const clean=sortRated(items);return clean.length?`<div class="item-list">${clean.map(x=>`<div class="structured-item"><span class="certainty">${esc(x.certainty)}</span><span>${esc(x.text)}</span></div>`).join('')}</div>`:`<div class="tiny">未填写</div>`}
 function actionList(steps=[]){const clean=steps.filter(x=>String(x||'').trim());return clean.length?`<div class="action-steps">${clean.map((x,i)=>`<div class="action-step"><span class="step-num">${i+1}.</span><span>${esc(x)}</span></div>`).join('')}</div>`:''}
@@ -3122,6 +3147,24 @@ document.addEventListener('click',event=>{
   document.querySelector('.brand-chevron')?.classList.remove('is-open');
  }
 });
+
+document.addEventListener('keydown',event=>{
+ if(event.key!=='Escape')return;
+ if(overlay){
+  event.preventDefault();
+  overlay=null;
+  pendingDelete=null;
+  renderOverlay();
+  return;
+ }
+ if(brandMenuOpen){
+  event.preventDefault();
+  brandMenuOpen=false;
+  render();
+  return;
+ }
+});
+
 render();
 })();
 </script>
