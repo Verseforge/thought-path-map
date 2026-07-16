@@ -631,6 +631,31 @@ body.is-project-dragging .drag-handle{cursor:grabbing}
 const STORAGE='siluotu_round1_v1';
 const STORAGE_ORDER_MIGRATION=STORAGE+'_project_array_order_v1';
 const AI_REPORT_STORAGE=STORAGE+'_ai_reports_v1';
+
+function extractAIResponseContent(payload){
+ const choice=payload?.choices?.[0];
+ const message=choice?.message||{};
+ const direct=[message.content,choice?.text,payload?.output_text];
+ for(const value of direct){
+  if(typeof value==='string'&&value.trim())return value.trim();
+  if(Array.isArray(value)){
+   const joined=value.map(part=>{
+    if(typeof part==='string')return part;
+    if(part&&typeof part==='object')return part.text||part.content||part.value||'';
+    return '';
+   }).join('').trim();
+   if(joined)return joined;
+  }
+ }
+ return '';
+}
+function aiEmptyContentMessage(payload,label){
+ const finish=String(payload?.choices?.[0]?.finish_reason||'').trim();
+ const hasReasoning=Boolean(String(payload?.choices?.[0]?.message?.reasoning_content||'').trim());
+ if(finish==='length')return `${label}因输出长度不足而提前结束，请重试或更换模型。`;
+ if(hasReasoning)return `${label}已完成推理，但没有生成最终回复内容，请重试或更换模型。`;
+ return `${label}已返回响应，但没有读取到可用内容。`;
+}
 const COLORS=['var(--g1)','var(--g2)','var(--g3)','var(--g4)','var(--g5)','var(--g6)','var(--g7)','var(--g8)','var(--g9)'];
 const modes={
  decision:{
@@ -2850,7 +2875,7 @@ window.App={
     body:JSON.stringify({
      model,
      messages:[{role:'user',content:'请只回复：连接成功'}],
-     max_tokens:16,
+     max_tokens:256,
      stream:false
     }),
     signal:aiConnectionController.signal
@@ -2868,8 +2893,8 @@ window.App={
     if(remote&&response.status!==401)message+=` 服务商返回：${remote.slice(0,120)}`;
     throw new Error(message);
    }
-   const content=String(data?.choices?.[0]?.message?.content||'').trim();
-   if(!content)throw new Error('接口已返回响应，但没有读取到模型回复内容。');
+   const content=extractAIResponseContent(data);
+   if(!content)throw new Error(aiEmptyContentMessage(data,'连接测试'));
    const used=Number(data?.usage?.total_tokens);
    aiConnection={state:'success',message:`已收到模型响应${Number.isFinite(used)?`，本次请求共使用 ${used} tokens`:''}。现在可以开始分析当前思路图。`};
   }catch(error){
@@ -2912,7 +2937,7 @@ window.App={
     body:JSON.stringify({
      model,
      messages:[{role:'system',content:aiPreflightSystemPrompt()},{role:'user',content:aiPreflightUserPrompt(p)}],
-     max_tokens:120,
+     max_tokens:800,
      stream:false
     }),
     signal:aiAnalysisController.signal
@@ -2930,8 +2955,8 @@ window.App={
     if(remote&&preflightResponse.status!==401)message+=` 服务商返回：${remote.slice(0,120)}`;
     throw new Error(message);
    }
-   const preflightContent=String(preflightRaw?.choices?.[0]?.message?.content||'').trim();
-   if(!preflightContent)throw new Error('分析前检查已返回响应，但没有读取到分类结果。');
+   const preflightContent=extractAIResponseContent(preflightRaw);
+   if(!preflightContent)throw new Error(aiEmptyContentMessage(preflightRaw,'分析前检查'));
    const preflight=parseAIPreflightJSON(preflightContent);
    aiPreflight=preflight;
    aiPreflightDebug=preflight;
@@ -2951,7 +2976,7 @@ window.App={
     body:JSON.stringify({
      model,
      messages:[{role:'system',content:aiSystemPrompt(p.mode)},{role:'user',content:aiUserPrompt(p)}],
-     max_tokens:1800,
+     max_tokens:4096,
      stream:false
     }),
     signal:aiAnalysisController.signal
@@ -2969,8 +2994,8 @@ window.App={
     if(remote&&response.status!==401)message+=` 服务商返回：${remote.slice(0,120)}`;
     throw new Error(message);
    }
-   const content=String(result?.choices?.[0]?.message?.content||'').trim();
-   if(!content)throw new Error('接口已返回响应，但没有读取到报告内容。');
+   const content=extractAIResponseContent(result);
+   if(!content)throw new Error(aiEmptyContentMessage(result,'分析报告'));
    const data=parseAIReportJSON(content);
    const report={id:id('report'),projectId:p.id,projectTitle:p.title,mode:p.mode,createdAt:Date.now(),channel:'自备 AI',provider:aiProviderLabel(aiConfigDraft.provider),model,demo:false,promptVersion:p.mode==='decision'?'decision_v10':'thought_v4',preflight,data};
    aiReports.unshift(report);saveAIReports();activeReportId=report.id;aiLoadingPhase='idle';aiView='report';render();window.scrollTo({top:0,behavior:'smooth'});
